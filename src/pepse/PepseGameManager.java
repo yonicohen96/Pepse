@@ -28,6 +28,6 @@ public class PepseGameManager extends GameManager {
         }
         Terrain terrain = new Terrain(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(),
                 SEED);
-        terrain.createInRange(100, 300);
+        terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
     }
 }

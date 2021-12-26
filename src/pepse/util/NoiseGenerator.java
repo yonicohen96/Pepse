@@ -3,6 +3,7 @@ package pepse.util;
 import java.util.Random;
 
 public class NoiseGenerator {
+    //todo different noise function
     private double seed;
     private long default_size;
     private int[] p;
