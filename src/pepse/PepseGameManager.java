@@ -13,6 +13,9 @@ import pepse.world.Terrain;
 import java.nio.channels.SelectionKey;
 
 public class PepseGameManager extends GameManager {
+
+    private static final int SEED = 100;
+
     public static void main(String[] args) {
         new PepseGameManager().run();
     }
@@ -24,9 +27,7 @@ public class PepseGameManager extends GameManager {
             Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
         }
         Terrain terrain = new Terrain(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(),
-                100);
-        for (int i = 0; i < 2000; i++) {
-            System.out.println(terrain.groundHeightAt(i));
-        }
+                SEED);
+        terrain.createInRange(100, 300);
     }
 }
