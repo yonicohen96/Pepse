@@ -20,7 +20,6 @@ public class Sky {
         gameObjects.addGameObject(sky, skyLayer);
         sky.setTag("sky");
         return sky;
-
     }
 
 }
