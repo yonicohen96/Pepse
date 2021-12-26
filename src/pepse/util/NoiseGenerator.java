@@ -58,43 +58,6 @@ public class NoiseGenerator {
         return this.seed;
     }
 
-    public double noise(double x, double y, double z, int size) {
-        double value = 0.0;
-        double initialSize = size;
-
-        while (size >= 1) {
-            value += smoothNoise((x / size), (y / size), (z / size)) * size;
-            size /= 2.0;
-        }
-
-        return value / initialSize;
-    }
-
-    public double noise(double x, double y, double z) {
-        double value = 0.0;
-        double size = default_size;
-        double initialSize = size;
-
-        while (size >= 1) {
-            value += smoothNoise((x / size), (y / size), (z / size)) * size;
-            size /= 2.0;
-        }
-
-        return value / initialSize;
-    }
-
-    public double noise(double x, double y) {
-        double value = 0.0;
-        double size = default_size;
-        double initialSize = size;
-
-        while (size >= 1) {
-            value += smoothNoise((x / size), (y / size), (0f / size)) * size;
-            size /= 2.0;
-        }
-
-        return value / initialSize;
-    }
 
     public double noise(double x) {
         double value = 0.0;

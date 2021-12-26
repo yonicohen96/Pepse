@@ -6,7 +6,7 @@ import pepse.util.NoiseGenerator;
 
 public class Terrain {
 
-    private final NoiseGenerator noise;
+    private final NoiseGenerator noiseGenerator;
     private GameObjectCollection gameObjects;
     private int groundLayer;
     private final float groundHeightAtX0;
@@ -17,11 +17,11 @@ public class Terrain {
         this.gameObjects = gameObjects;
         this.groundLayer = groundLayer;
         this.groundHeightAtX0 = windowDimensions.y() * 2 / 3;
-        this.noise = new NoiseGenerator(seed);
+        this.noiseGenerator = new NoiseGenerator(seed);
     }
 
     public float groundHeightAt(float x) {
-        return (float) noise.noise(x);
+        return (float) noiseGenerator.noise(x);
 
     }
 }
