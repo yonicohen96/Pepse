@@ -50,10 +50,10 @@ public class Sun extends GameObject{
 
     }
 
-    private static Vector2 calcSunPosition(Vector2 windowDimensions, float angle) {
+    private static Vector2 calcSunPosition(Vector2 windowDimensions, float angleInSky) {
         float radius = (windowDimensions.y() - SUN_SIZE.y()) / 2;
-        float y = (float) ((windowDimensions.y() / 2) - radius * Math.cos(angle));
-        float x = (float) ((windowDimensions.x() / 2) - radius * Math.sin(angle));
+        float y = (float) ((windowDimensions.y() / 2) - radius * Math.cos(angleInSky));
+        float x = (float) ((windowDimensions.x() / 2) - radius * 1.8 * Math.sin(angleInSky));
         return new Vector2(x, y);
     }
 
