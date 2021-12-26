@@ -14,6 +14,7 @@ public class Terrain {
 
     private static final String GROUND_TAG = "ground";
     private static final float SCALING_RATIO = 2.0f / 9;
+    private static final float X0_HEIGHT_RATIO = 2.0f / 3;
     private final NoiseGenerator noiseGenerator;
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
@@ -28,7 +29,7 @@ public class Terrain {
                    int seed){
         this.gameObjects = gameObjects;
         this.groundLayer = groundLayer;
-        this.groundHeightAtX0 = windowDimensions.y() * 2 / 3;
+        this.groundHeightAtX0 = windowDimensions.y() * X0_HEIGHT_RATIO;
         this.scalingMaxAmplitude = windowDimensions.y() * SCALING_RATIO;
         this.noiseGenerator = new NoiseGenerator(seed);
     }
