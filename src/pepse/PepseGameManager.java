@@ -10,6 +10,7 @@ import danogl.util.Vector2;
 import pepse.world.Sky;
 import pepse.world.Terrain;
 import pepse.world.daynight.Night;
+import pepse.world.daynight.Sun;
 
 import java.nio.channels.SelectionKey;
 
@@ -32,5 +33,6 @@ public class PepseGameManager extends GameManager {
                 SEED);
         terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        Sun.create(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
     }
 }

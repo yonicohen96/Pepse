@@ -14,6 +14,7 @@ import java.awt.*;
 public class Night {
     private static final String NIGHT_TAG = "night";
     private static final Float MIDNIGHT_OPACITY = 0.5f;
+    private static final Float INITIAL_TRANSITION_VALUE = 0f;
 
     public static GameObject create(
             GameObjectCollection gameObjects,
@@ -28,10 +29,10 @@ public class Night {
         new Transition<Float>(
                 nightBlock, // the game object being changed
                 nightBlock.renderer()::setOpaqueness, // the method to call
-                0f, // initial transition value
+                INITIAL_TRANSITION_VALUE, // initial transition value
                 MIDNIGHT_OPACITY, // final transition value
                 Transition.CUBIC_INTERPOLATOR_FLOAT, // use a cubic interpolator
-                cycleLength/2, // transtion fully over half a day
+                cycleLength / 2, // transtion fully over half a day
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
         return nightBlock;
