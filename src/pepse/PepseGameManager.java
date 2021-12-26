@@ -9,12 +9,14 @@ import danogl.gui.WindowController;
 import danogl.util.Vector2;
 import pepse.world.Sky;
 import pepse.world.Terrain;
+import pepse.world.daynight.Night;
 
 import java.nio.channels.SelectionKey;
 
 public class PepseGameManager extends GameManager {
 
     private static final int SEED = 100;
+    private static final float CYCLE_LENGTH = 30;
 
     public static void main(String[] args) {
         new PepseGameManager().run();
@@ -29,5 +31,6 @@ public class PepseGameManager extends GameManager {
         Terrain terrain = new Terrain(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(),
                 SEED);
         terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
+        Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
     }
 }
