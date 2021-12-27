@@ -2,6 +2,8 @@ package pepse.world.trees;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
+import danogl.components.ScheduledTask;
+import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -18,6 +20,7 @@ public class Tree {
     private static final String STEM_BLOCK_TAG = "stem block";
     private static final Color STEM_COLOR = new Color(100, 50, 20);
     private static final Color LEAVES_COLOR = new Color(50, 200, 30);
+    private static final float LEAF_SCALE_DELTA = 0.5f;
     private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
@@ -69,9 +72,12 @@ public class Tree {
     // todo unite all function of creations of blocks
     private void createLeavesBlock(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
-        GameObject gameObject = new Leaf(new Vector2(blockX, blockY), renderable);
-        gameObject.setTag(STEM_BLOCK_TAG);
-        gameObjects.addGameObject(gameObject);
+        GameObject leaf = new Leaf(new Vector2(blockX, blockY), renderable);
+        float randWaitTime = (random.nextInt(100)/ 10f);
+        new ScheduledTask(leaf, randWaitTime, false
+                , () -> leafActions(leaf));
+        leaf.setTag(STEM_BLOCK_TAG);
+        gameObjects.addGameObject(leaf);
     }
 
     private void createStemBlock(int blockX, int blockY) {
@@ -98,4 +104,38 @@ public class Tree {
         }
         return ((minX / Block.SIZE) - 1) * Block.SIZE;
     }
+
+    private void leafActions(GameObject leaf){
+        new Transition<Float>(
+                leaf, // the game object being changed
+                (angle) -> leaf.renderer().setRenderableAngle(angle), // the method to call
+                (float) (-5 * Math.PI), // initial transition value
+                (float) (5 * Math.PI), // final transition value
+                Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
+                1.1f, // transition sun
+                Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
+                null); // nothing further to execute upon reaching final value
+        new Transition<Float>(
+                leaf, // the game object being changed
+                (value) -> leaf.setDimensions(changeBounds(value, leaf.getDimensions().x())), // the method to call
+                -LEAF_SCALE_DELTA, // initial transition value
+                LEAF_SCALE_DELTA, // final transition value
+                Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
+                0.8f, // transition sun
+                Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
+                null); // nothing further to execute upon reaching final value
+    }
+
+    private Vector2 changeBounds(Float value, float x) {
+        float size =  x + value;
+        if (size < 20){
+            size = 20;
+        }
+        if (size > 40){
+            size = 40;
+        }
+        return new Vector2(size, size);
+    }
+
+
 }
