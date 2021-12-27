@@ -57,7 +57,7 @@ public class Terrain {
 
     private void createBlockAtXY(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
-        GameObject gameObject = new GameObject(new Vector2(blockX, blockY), new Vector2(Block.SIZE, Block.SIZE), renderable);
+        GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(GROUND_TAG);
         gameObjects.addGameObject(gameObject);
     }
