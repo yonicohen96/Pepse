@@ -38,6 +38,9 @@ public class PepseGameManager extends GameManager {
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
         GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
         // todo check if this down-casting is ok (sending sun which is GameObject to Sun parameter)
-        SunHalo.create(gameObjects(), Layer.BACKGROUND, sun, new Color(255, 255, 0, 20));
+        GameObject sunHalo = SunHalo.create(gameObjects(), Layer.BACKGROUND, sun, new Color(255, 255, 0, 20));
+
     }
+
+
 }

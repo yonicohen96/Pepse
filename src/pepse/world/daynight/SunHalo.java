@@ -22,6 +22,10 @@ public class SunHalo extends GameObject {
         super(topLeftCorner, dimensions, renderable);
     }
 
+    private static void updateHalo(float deltaTime, GameObject sun, GameObject sunHalo){
+        sunHalo.setCenter(sun.getCenter());
+    }
+
     public static GameObject create(
             GameObjectCollection gameObjects,
             int layer,
@@ -31,6 +35,12 @@ public class SunHalo extends GameObject {
         Vector2 haloSize = sun.getDimensions().mult(1.5f);
         GameObject sunHalo = new SunHalo(Vector2.ZERO, haloSize, sunImg);
         gameObjects.addGameObject(sunHalo, layer);
+        sunHalo.addComponent(deltaTime -> updateHalo(deltaTime, sun, sunHalo));
         return sunHalo;
     }
+
+
+
+
+
 }
