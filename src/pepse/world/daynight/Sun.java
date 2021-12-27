@@ -25,6 +25,7 @@ public class Sun extends GameObject{
      */
     public Sun(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
+        this.setTag("sun");
 
     }
 

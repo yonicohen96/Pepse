@@ -1,6 +1,7 @@
 package pepse;
 
 import danogl.GameManager;
+import danogl.GameObject;
 import danogl.collisions.Layer;
 import danogl.gui.ImageReader;
 import danogl.gui.SoundReader;
@@ -11,7 +12,9 @@ import pepse.world.Sky;
 import pepse.world.Terrain;
 import pepse.world.daynight.Night;
 import pepse.world.daynight.Sun;
+import pepse.world.daynight.SunHalo;
 
+import java.awt.*;
 import java.nio.channels.SelectionKey;
 
 public class PepseGameManager extends GameManager {
@@ -33,6 +36,8 @@ public class PepseGameManager extends GameManager {
                 SEED);
         terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
-        Sun.create(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        // todo check if this down-casting is ok (sending sun which is GameObject to Sun parameter)
+        SunHalo.create(gameObjects(), Layer.BACKGROUND, sun, new Color(255, 255, 0, 20));
     }
 }
