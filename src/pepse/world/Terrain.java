@@ -62,6 +62,7 @@ public class Terrain {
         gameObjects.addGameObject(gameObject);
     }
 
+    // todo extract to utils
     private int getMinX(int minX){
         if (minX >= 0){
             return (minX / Block.SIZE) * Block.SIZE;

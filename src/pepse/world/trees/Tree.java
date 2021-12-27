@@ -14,8 +14,10 @@ import java.awt.*;
 import java.util.Random;
 
 public class Tree {
-    private static final double TREE_SEED = 13;
+    private static final double TREE_SEED = 14;
     private static final String STEM_BLOCK_TAG = "stem block";
+    private static final Color STEM_COLOR = new Color(100, 50, 20);
+    private static final Color LEAVES_COLOR = new Color(50, 200, 30);
     private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
@@ -40,16 +42,40 @@ public class Tree {
     private void createTree(int x) {
         int treeBaseY = (int) terrain.groundHeightAt(x) - Block.SIZE;
         int treeSize = (random.nextInt(treeBaseY * 2 / 3) + treeBaseY / 3) / Block.SIZE;
+        createStem(x, treeBaseY, treeSize);
+        createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
+    }
+
+    private void createLeaves(int x, int treetop, int treeSize) {
+        int delta = getMinX(treeSize * Block.SIZE / 3);
+        for (int i = x - delta ; i <= x + delta; i+=Block.SIZE) {
+            for (int j = treetop - delta; j <= treetop + delta ; j+=Block.SIZE) {
+                if (random.nextInt(10) < 8){
+                    createLeavesBlock(i, j);
+                }
+            }
+        }
+
+    }
+
+    private void createStem(int x, int treeBaseY, int treeSize) {
         for (int i = 0; i < treeSize; i++) {
             System.out.println(treeSize);
             createStemBlock(x, treeBaseY);
             treeBaseY -= Block.SIZE;
-
         }
     }
 
+    // todo unite all function of creations of blocks
+    private void createLeavesBlock(int blockX, int blockY) {
+        Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
+        GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
+        gameObject.setTag(STEM_BLOCK_TAG);
+        gameObjects.addGameObject(gameObject);
+    }
+
     private void createStemBlock(int blockX, int blockY) {
-        Renderable renderable = new RectangleRenderable(new Color(100, 50, 20));
+        Renderable renderable = new RectangleRenderable(STEM_COLOR);
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(gameObject);
