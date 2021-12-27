@@ -69,7 +69,7 @@ public class Tree {
     // todo unite all function of creations of blocks
     private void createLeavesBlock(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
-        GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
+        GameObject gameObject = new Leaf(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(gameObject);
     }
