@@ -20,12 +20,12 @@ public class SunHalo extends GameObject {
      */
     public SunHalo(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
+        setTag("sunHalo");
     }
 
     private static void updateHalo(float deltaTime, GameObject sun, GameObject sunHalo){
         sunHalo.setCenter(sun.getCenter());
         // todo if time permits - change color to red
-
     }
 
     public static GameObject create(
