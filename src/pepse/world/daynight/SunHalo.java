@@ -24,6 +24,8 @@ public class SunHalo extends GameObject {
 
     private static void updateHalo(float deltaTime, GameObject sun, GameObject sunHalo){
         sunHalo.setCenter(sun.getCenter());
+        // todo if time permits - change color to red
+
     }
 
     public static GameObject create(
