@@ -27,10 +27,14 @@ public class Tree {
     private final Terrain terrain;
     private final static Random random = new Random();
     private final GameObjectCollection gameObjects;
+    private int stemLayer;
+    private int leafLayer;
 
-    public Tree(Terrain terrain, GameObjectCollection gameObjects) {
+    public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer) {
         this.terrain  = terrain;
         this.gameObjects = gameObjects;
+        this.stemLayer = stemLayer;
+        this.leafLayer = leafLayer;
     }
 
     public void createInRange(int minX, int maxX) {
@@ -81,7 +85,7 @@ public class Tree {
         new ScheduledTask(leaf, windRandWaitTime, false
                 , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
-        gameObjects.addGameObject(leaf);
+        gameObjects.addGameObject(leaf, leafLayer);
     }
 
     private void startLifeCycle(Leaf leaf) {
@@ -106,7 +110,7 @@ public class Tree {
         Renderable renderable = new RectangleRenderable(STEM_COLOR);
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
-        gameObjects.addGameObject(gameObject);
+        gameObjects.addGameObject(gameObject, stemLayer);
     }
 
     private boolean allocateTreeInX(int x){
