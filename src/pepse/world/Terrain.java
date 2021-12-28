@@ -13,8 +13,9 @@ import java.awt.*;
 public class Terrain {
 
     private static final String GROUND_TAG = "ground";
-    private static final float SCALING_RATIO = 2.0f / 9;
+    private static final float SCALING_RATIO = 4.0f / 9;
     private static final float X0_HEIGHT_RATIO = 2.0f / 3;
+    private static final double STRETCH_NOISE = 0.05;
     private final NoiseGenerator noiseGenerator;
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
@@ -35,7 +36,7 @@ public class Terrain {
     }
 
     public float groundHeightAt(float x) {
-        return (float) (groundHeightAtX0 + (scalingMaxAmplitude * noiseGenerator.noise(x)));
+        return (float) (groundHeightAtX0 + (scalingMaxAmplitude * noiseGenerator.noise(STRETCH_NOISE * x)));
     }
 
     public void createInRange(int minX, int maxX) {
