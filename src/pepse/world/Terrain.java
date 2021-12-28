@@ -20,16 +20,17 @@ public class Terrain {
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
     private final float scalingMaxAmplitude;
-
-    private GameObjectCollection gameObjects;
-    private int groundLayer;
+    private final GameObjectCollection gameObjects;
+    private final int lowerGroundLayer;
+    private final int upperGroundLayer;
     private final float groundHeightAtX0;
 
     public Terrain(GameObjectCollection gameObjects,
-                   int groundLayer, Vector2 windowDimensions,
+                   int lowerGroundLayer, int upperGroundLayer, Vector2 windowDimensions,
                    int seed){
         this.gameObjects = gameObjects;
-        this.groundLayer = groundLayer;
+        this.upperGroundLayer = upperGroundLayer;
+        this.lowerGroundLayer = lowerGroundLayer;
         this.groundHeightAtX0 = windowDimensions.y() * X0_HEIGHT_RATIO;
         this.scalingMaxAmplitude = windowDimensions.y() * SCALING_RATIO;
         this.noiseGenerator = new NoiseGenerator(seed);
@@ -50,17 +51,19 @@ public class Terrain {
 
     private void createTerrainColumn(int nextX) {
         int yHeight = (int) (Math.floor(groundHeightAt(nextX) / Block.SIZE) * Block.SIZE);
-        for (int i = 0; i < TERRAIN_DEPTH; i++) {
-            createBlockAtXY(nextX, yHeight);
+        createBlockAtXY(nextX, yHeight, upperGroundLayer);
+        yHeight += Block.SIZE;
+        for (int i = 1; i < TERRAIN_DEPTH; i++) {
+            createBlockAtXY(nextX, yHeight, lowerGroundLayer);
             yHeight += Block.SIZE;
         }
     }
 
-    private void createBlockAtXY(int blockX, int blockY) {
+    private void createBlockAtXY(int blockX, int blockY, int layer) {
         Renderable renderable = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(GROUND_TAG);
-        gameObjects.addGameObject(gameObject,groundLayer);
+        gameObjects.addGameObject(gameObject, layer);
     }
 
     // todo extract to utils

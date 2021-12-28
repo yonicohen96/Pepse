@@ -26,7 +26,9 @@ public class PepseGameManager extends GameManager {
     private static final int SUN_HALO_LAYER = Layer.BACKGROUND + 2;
     private static final int STEM_LAYER = Layer.BACKGROUND + 3;
     private static final int LEAF_LAYER = Layer.BACKGROUND + 4;
-    private static final int GROUND_LAYER = Layer.BACKGROUND + 5;
+    private static final int LOWER_GROUND_LAYER = Layer.BACKGROUND + 5;
+    private static final int UPPER_GROUND_LAYER = Layer.BACKGROUND + 6;
+
 
     public static void main(String[] args) {
         new PepseGameManager().run();
@@ -38,7 +40,7 @@ public class PepseGameManager extends GameManager {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);{
             Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
         }
-        Terrain terrain = new Terrain(gameObjects(), GROUND_LAYER, windowController.getWindowDimensions(),
+        Terrain terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER, windowController.getWindowDimensions(),
                 SEED);
         terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
@@ -48,7 +50,7 @@ public class PepseGameManager extends GameManager {
         // todo check if should instantiate only one tree or instance for each tree
         Tree tree = new Tree(terrain, gameObjects(), STEM_LAYER, LEAF_LAYER);
         tree.createInRange(0, (int)windowController.getWindowDimensions().x());
-        gameObjects().layers().shouldLayersCollide(LEAF_LAYER, GROUND_LAYER, true);
+        gameObjects().layers().shouldLayersCollide(LEAF_LAYER, UPPER_GROUND_LAYER, true);
 
     }
 
