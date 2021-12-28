@@ -7,7 +7,6 @@ import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import pepse.util.ColorSupplier;
 import pepse.util.NoiseGenerator;
 import pepse.world.Block;
 import pepse.world.Terrain;
@@ -21,6 +20,9 @@ public class Tree {
     private static final Color STEM_COLOR = new Color(100, 50, 20);
     private static final Color LEAVES_COLOR = new Color(50, 200, 30);
     private static final float LEAF_SCALE_DELTA = 0.5f;
+    private static final float FADEOUT_TIME = 10f;
+    private static final int LEAF_DEATH_RANGE = 5;
+    private static final int LEAF_LIVE_RANGE = 50;
     private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
@@ -58,7 +60,6 @@ public class Tree {
                 }
             }
         }
-
     }
 
     private void createStem(int x, int treeBaseY, int treeSize) {
@@ -72,12 +73,33 @@ public class Tree {
     // todo unite all function of creations of blocks
     private void createLeavesBlock(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
-        GameObject leaf = new Leaf(new Vector2(blockX, blockY), renderable);
-        float randWaitTime = (random.nextInt(100)/ 10f);
-        new ScheduledTask(leaf, randWaitTime, false
-                , () -> leafActions(leaf));
+        Leaf leaf = new Leaf(new Vector2(blockX, blockY), renderable);
+        startLifeCycle(leaf);
+
+        // todo check if need to save states for leaves - if not fallen,
+        float windRandWaitTime = (random.nextInt(100)/ 10f);
+        new ScheduledTask(leaf, windRandWaitTime, false
+                , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(leaf);
+    }
+
+    private void startLifeCycle(Leaf leaf) {
+        leaf.resetPosition();
+        float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ 10f);
+        new ScheduledTask(leaf, lifeRandWaitTime, false
+                , () -> leafLifeCycleAction(leaf));
+    }
+
+    private void leafLifeCycleAction(Leaf leaf) {
+        // TODO change for sinus fall
+        leaf.transform().setVelocityY(50);
+        leaf.renderer().fadeOut(FADEOUT_TIME, () -> postFadeActions(leaf));
+    }
+
+    private void postFadeActions(Leaf leaf) {
+        float deathTime = (float) random.nextInt(LEAF_DEATH_RANGE);
+        new ScheduledTask(leaf, deathTime, false, () -> startLifeCycle(leaf));
     }
 
     private void createStemBlock(int blockX, int blockY) {
@@ -105,7 +127,7 @@ public class Tree {
         return ((minX / Block.SIZE) - 1) * Block.SIZE;
     }
 
-    private void leafActions(GameObject leaf){
+    private void windLeafActions(GameObject leaf){
         new Transition<Float>(
                 leaf, // the game object being changed
                 (angle) -> leaf.renderer().setRenderableAngle(angle), // the method to call
