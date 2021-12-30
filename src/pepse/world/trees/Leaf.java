@@ -14,7 +14,6 @@ public class Leaf extends Block {
         super(topLeftCorner, renderable);
         this.originalPosition = topLeftCorner;
         physics().setMass(1);
-        // todo leaf should pass stem
     }
 
     public void resetPosition(){

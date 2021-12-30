@@ -61,6 +61,7 @@ public class Tree {
             for (int j = treetop - delta; j <= treetop + delta ; j+=Block.SIZE) {
                 if (random.nextInt(10) < 8){
                     createLeavesBlock(i, j);
+                    // todo - set more reasonable constants for leaves
                 }
             }
         }
