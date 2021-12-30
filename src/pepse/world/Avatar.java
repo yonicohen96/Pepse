@@ -8,7 +8,6 @@ import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -16,7 +15,10 @@ public class Avatar extends GameObject {
     private static final Vector2 AVATAR_SIZE = new Vector2(30, 70);
     private static final float MOVEMENT_SPEED = 300;
     private static final float JUMP_SPEED = 300;
+    private static final float INITIAL_ENERGY = 100;
     private static final float ACCELERATION_Y = 500;
+    private static final float ENERGY_CHANGE = 0.5f;
+    private float energy;
     private UserInputListener inputListener;
     private ImageReader imageReader;
 
@@ -33,6 +35,7 @@ public class Avatar extends GameObject {
         super(topLeftCorner, dimensions, renderable);
         this.inputListener = inputListener;
         this.imageReader = imageReader;
+        this.energy = INITIAL_ENERGY;
         this.transform().setAccelerationY(ACCELERATION_Y);
         this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
     }
@@ -51,14 +54,27 @@ public class Avatar extends GameObject {
     public void update(float deltaTime) {
         super.update(deltaTime);
         horizontalMovement();
-        jump();
+        verticalMovement();
+        // todo delete prints
+        System.out.println(energy);
 
     }
 
-    private void jump() {
-        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0){
-            setVelocity(getVelocity().add(Vector2.UP.mult(JUMP_SPEED)));
-            System.out.println(getVelocity().y());
+    private void verticalMovement() {
+        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE)){
+            if (inputListener.isKeyPressed(KeyEvent.VK_SHIFT)){
+                energy = Math.max(0, energy - ENERGY_CHANGE);
+            }
+
+
+//        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0){
+//            setVelocity(getVelocity().add(Vector2.UP.mult(JUMP_SPEED)));
+//            System.out.println(getVelocity().y());
+        }
+        else{
+            if (this.getVelocity().y() == 0 && this.energy < INITIAL_ENERGY){
+                energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
+            }
         }
     }
 
