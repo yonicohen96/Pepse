@@ -31,6 +31,8 @@ public class PepseGameManager extends GameManager {
     private static final int LOWER_GROUND_LAYER = Layer.BACKGROUND + 5;
     private static final int UPPER_GROUND_LAYER = Layer.BACKGROUND + 6;
     private static final int AVATAR_LAYER = Layer.BACKGROUND + 4;
+    private Avatar avatar;
+    private Terrain terrain;
 
     public static void main(String[] args) {
         new PepseGameManager().run();
@@ -42,7 +44,7 @@ public class PepseGameManager extends GameManager {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);{
             Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
         }
-        Terrain terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER, windowController.getWindowDimensions(),
+        terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER, windowController.getWindowDimensions(),
                 SEED);
         terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
@@ -54,15 +56,20 @@ public class PepseGameManager extends GameManager {
         tree.createInRange(0, (int)windowController.getWindowDimensions().x());
         gameObjects().layers().shouldLayersCollide(LEAF_LAYER, UPPER_GROUND_LAYER, true);
         // create avatar
-        Avatar avatar = Avatar.create(gameObjects(), AVATAR_LAYER, Vector2.ZERO, inputListener, imageReader);
+        avatar = Avatar.create(gameObjects(), AVATAR_LAYER, Vector2.ZERO, inputListener, imageReader);
         float avatarX = windowController.getWindowDimensions().x() / 2;
         float avatarY = terrain.groundHeightAt(windowController.getWindowDimensions().x() / 2) -
                 Block.SIZE - avatar.getDimensions().y();
         avatar.setTopLeftCorner(new Vector2(avatarX, avatarY));
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, LOWER_GROUND_LAYER, true);
-
-
     }
 
-
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        float avatarX = avatar.getTopLeftCorner().x();
+        float terrainAtX = (int) (Math.floor(terrain.groundHeightAt(avatarX) / Block.SIZE) * Block.SIZE);
+        float avatarTopLeftY = terrainAtX - avatar.getDimensions().y();
+        avatar.transform().setTopLeftCornerY(Math.min(avatar.getTopLeftCorner().y(), avatarTopLeftY));
+    }
 }

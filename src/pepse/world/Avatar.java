@@ -28,7 +28,7 @@ public class Avatar extends GameObject {
      * @param topLeftCorner Position of the object, in window coordinates (pixels).
      *                      Note that (0,0) is the top-left corner of the window.
      * @param dimensions    Width and height in window coordinates.
-     * @param renderable    The renderable representing the object. Can be null, in which case
+     * @param renderable    The renderable representing the obj ect. Can be null, in which case
      */
     public Avatar(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
                   UserInputListener inputListener, ImageReader imageReader) {
@@ -38,6 +38,7 @@ public class Avatar extends GameObject {
         this.energy = INITIAL_ENERGY;
         this.transform().setAccelerationY(ACCELERATION_Y);
         this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
+        this.physics().setMass(1);
     }
 
     public static Avatar create(GameObjectCollection gameObjects,
@@ -56,14 +57,19 @@ public class Avatar extends GameObject {
         horizontalMovement();
         verticalMovement();
         // todo delete prints
-        System.out.println(energy);
+//        System.out.println(energy);
 
     }
 
     private void verticalMovement() {
         if(inputListener.isKeyPressed(KeyEvent.VK_SPACE)){
-            if (inputListener.isKeyPressed(KeyEvent.VK_SHIFT)){
+            if (inputListener.isKeyPressed(KeyEvent.VK_SHIFT) && energy > 0){
                 energy = Math.max(0, energy - ENERGY_CHANGE);
+                this.transform().setVelocityY(-JUMP_SPEED);
+                System.out.println(this.getVelocity().y());
+            }
+            else if (getVelocity().y() == 0){
+                this.transform().setVelocityY(-JUMP_SPEED);
             }
 
 
