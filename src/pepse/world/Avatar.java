@@ -4,18 +4,19 @@ import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
-import danogl.gui.rendering.OvalRenderable;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import pepse.world.daynight.Sun;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Avatar extends GameObject {
     private static final Vector2 AVATAR_SIZE = new Vector2(30, 70);
     private static final float MOVEMENT_SPEED = 300;
+    private static final float JUMP_SPEED = 300;
+    private static final float ACCELERATION_Y = 20;
     private UserInputListener inputListener;
     private ImageReader imageReader;
 
@@ -32,6 +33,8 @@ public class Avatar extends GameObject {
         super(topLeftCorner, dimensions, renderable);
         this.inputListener = inputListener;
         this.imageReader = imageReader;
+        this.transform().setAccelerationY(ACCELERATION_Y);
+        this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
     }
 
     public static Avatar create(GameObjectCollection gameObjects,
@@ -47,6 +50,19 @@ public class Avatar extends GameObject {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+        horizontalMovement();
+        jump();
+
+    }
+
+    private void jump() {
+        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0){
+            setVelocity(getVelocity().add(Vector2.UP.mult(JUMP_SPEED)));
+            System.out.println(getVelocity().y());
+        }
+    }
+
+    private void horizontalMovement() {
         Vector2 movementDir = Vector2.ZERO;
         if(inputListener.isKeyPressed(KeyEvent.VK_LEFT)){
             movementDir = movementDir.add(Vector2.LEFT);
@@ -54,6 +70,6 @@ public class Avatar extends GameObject {
         if(inputListener.isKeyPressed(KeyEvent.VK_RIGHT)){
             movementDir = movementDir.add(Vector2.RIGHT);
         }
-        setVelocity(movementDir.mult(MOVEMENT_SPEED));
+            setVelocity(movementDir.mult(MOVEMENT_SPEED).add(new Vector2(0, getVelocity().y())));
     }
 }

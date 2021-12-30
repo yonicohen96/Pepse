@@ -30,7 +30,7 @@ public class PepseGameManager extends GameManager {
     private static final int LEAF_LAYER = Layer.BACKGROUND + 4;
     private static final int LOWER_GROUND_LAYER = Layer.BACKGROUND + 5;
     private static final int UPPER_GROUND_LAYER = Layer.BACKGROUND + 6;
-    private static final int AVATAR_LAYER = Layer.BACKGROUND + 7;
+    private static final int AVATAR_LAYER = Layer.BACKGROUND + 4;
 
     public static void main(String[] args) {
         new PepseGameManager().run();
@@ -59,6 +59,7 @@ public class PepseGameManager extends GameManager {
         float avatarY = terrain.groundHeightAt(windowController.getWindowDimensions().x() / 2) -
                 Block.SIZE - avatar.getDimensions().y();
         avatar.setTopLeftCorner(new Vector2(avatarX, avatarY));
+        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, LOWER_GROUND_LAYER, true);
 
 
     }
