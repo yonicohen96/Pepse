@@ -16,7 +16,7 @@ public class Avatar extends GameObject {
     private static final Vector2 AVATAR_SIZE = new Vector2(30, 70);
     private static final float MOVEMENT_SPEED = 300;
     private static final float JUMP_SPEED = 300;
-    private static final float ACCELERATION_Y = 20;
+    private static final float ACCELERATION_Y = 500;
     private UserInputListener inputListener;
     private ImageReader imageReader;
 
