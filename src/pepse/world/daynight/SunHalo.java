@@ -2,6 +2,7 @@ package pepse.world.daynight;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
+import danogl.components.CoordinateSpace;
 import danogl.gui.rendering.OvalRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -20,6 +21,7 @@ public class SunHalo extends GameObject {
      */
     public SunHalo(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
+        this.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         setTag("sunHalo");
     }
 

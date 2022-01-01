@@ -96,6 +96,14 @@ public class PepseGameManager extends GameManager {
         screenLeftX = 0;
         screenRightX = (int) windowController.getWindowDimensions().x();
         //todo : work with products of block size, maybe define the delta by the initial blocks width.
+
+
+        // todo - delete
+        Camera objCamera = new Camera(avatar, Vector2.ZERO,
+        windowController.getWindowDimensions().mult(8f),
+        windowController.getWindowDimensions());
+
+        this.setCamera(objCamera);
     }
 
     @Override

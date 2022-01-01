@@ -54,7 +54,7 @@ public class Tree {
 
     private void createTree(int x) {
         int treeBaseY = (int) terrain.groundHeightAt(x) - Block.SIZE;
-        int treeSize = (random.nextInt(treeBaseY * 2 / 3) + treeBaseY / 3) / Block.SIZE;
+        int treeSize = (new Random(x).nextInt(270) + 180) / Block.SIZE;
         createStem(x, treeBaseY, treeSize);
         createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
     }

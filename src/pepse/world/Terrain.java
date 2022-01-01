@@ -20,7 +20,7 @@ public class Terrain {
     private int seed;
     private ScreenRendererManager rendererManager;
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
-    private static final int TERRAIN_DEPTH = 20;
+    private static final int TERRAIN_DEPTH = 30;
     private final float scalingMaxAmplitude;
     private final GameObjectCollection gameObjects;
     private final int lowerGroundLayer;

@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class Night {
     private static final String NIGHT_TAG = "night";
-    private static final Float MIDNIGHT_OPACITY = 0.5f;
+    private static final Float MIDNIGHT_OPACITY = 0.7f;
     private static final Float INITIAL_TRANSITION_VALUE = 0f;
 
     public static GameObject create(
