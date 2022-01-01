@@ -84,7 +84,7 @@ public class PepseGameManager extends GameManager {
         setCamera(new Camera(avatar, windowController.getWindowDimensions().mult(0.5f).add(initialAvatarLocation.mult(-1))
                 ,windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
-        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, LOWER_GROUND_LAYER, true);
+        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, UPPER_GROUND_LAYER, true);
 
         screenRendererManager.setIndexToFill(0);
         tree.createInRange(-(int)windowController.getWindowDimensions().x(),0);
