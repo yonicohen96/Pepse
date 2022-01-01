@@ -26,6 +26,10 @@ public class Avatar extends GameObject {
     private static final float ENERGY_CHANGE = 0.5f;
     private static final String WALK_ANIMATION_PATH = "assets/trump/trump%s.png";
     private static final String STAND_IMG_PATH = "assets/trump/trump1.png";
+    private static final String SOUND_BULLSHIT_READER = "assets/trumpsound/BULLSHIT.mp3";
+    private static final String SOUND_WIN_READER = "assets/trumpsound/WIN.mp3";
+    private static final String SOUND_SMART_READER = "assets/trumpsound/SMART.mp3";
+    private static final String SOUND_RICH_READER = "assets/trumpsound/RICH.mp3";
     private static final int FLY_ANIMATION_NUMBER = 11;
     private static final String FLY_ANIMATION_PATH = "assets/flyingTrump/flyingTrump%s.jpg";
     private final int WALK_ANIMATION_NUMBER = 3;
@@ -80,6 +84,8 @@ public class Avatar extends GameObject {
                 AvatarStatesNames.STAND);
         this.curState = this.standState;
     }
+
+
 
     private void setAvatarProperties() {
         this.transform().setAccelerationY(ACCELERATION_Y);
