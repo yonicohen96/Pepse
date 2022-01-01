@@ -10,6 +10,9 @@ import danogl.util.Vector2;
 
 import java.awt.*;
 
+/**
+ * class of sun object for pepse game
+ */
 public class Sun extends GameObject {
 
     private static final float SUN_SIZE = 100;
@@ -22,7 +25,6 @@ public class Sun extends GameObject {
     private static final double FINAL_TRANSITION_CYCLE = 2 * Math.PI;
     private static final double SUN_OVAL_RATIO = 1.8;
 
-
     /**
      * Construct a new GameObject instance.
      *
@@ -34,9 +36,16 @@ public class Sun extends GameObject {
     public Sun(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
         this.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
-
     }
 
+    /**
+     * function to create an object of sun
+     * @param gameObjects game object collection
+     * @param layer the layer to insert the created object to
+     * @param windowDimensions window's dimensions
+     * @param cycleLength cycle length of sun
+     * @return the created sun object
+     */
     public static GameObject create(
             GameObjectCollection gameObjects,
             int layer,
@@ -46,9 +55,11 @@ public class Sun extends GameObject {
         setTransition(windowDimensions, cycleLength, sun);
         sun.setTag(SUN_TAG);
         return sun;
-
     }
 
+    /*
+    function to create an instance of sun
+     */
     private static GameObject createInstance(GameObjectCollection gameObjects, int layer,
                                              Vector2 windowDimensions) {
         Renderable sunImg = new OvalRenderable(Color.YELLOW);
@@ -59,6 +70,9 @@ public class Sun extends GameObject {
         return sun;
     }
 
+    /*
+    function to set transition
+     */
     private static void setTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
         new Transition<>(
                 sun, // the game object being changed
@@ -71,12 +85,14 @@ public class Sun extends GameObject {
                 null); // nothing further to execute upon reaching final value
     }
 
+    /*
+    function to calculate position of sun
+     */
     private static Vector2 calcSunPosition(Vector2 windowDimensions, float angleInSky) {
         float radius = (windowDimensions.y() - SUN_DIMENSIONS.y()) / 2;
         float y = (float) ((windowDimensions.y() / 2) - radius * Math.cos(angleInSky));
         float x = (float) ((windowDimensions.x() / 2) - radius * SUN_OVAL_RATIO * Math.sin(angleInSky));
         return new Vector2(x, y);
     }
-
 
 }

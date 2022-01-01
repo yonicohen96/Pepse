@@ -63,6 +63,7 @@ public class PepseGameManager extends GameManager {
 //        this.setCamera(objCamera);
     }
 
+
     private void createWorldObjects(ImageReader imageReader, UserInputListener inputListener,
                                     WindowController windowController) {
         initializeTerrain(windowController);

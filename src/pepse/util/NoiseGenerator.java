@@ -1,23 +1,27 @@
 package pepse.util;
 
-import java.util.Random;
 
+/**
+ * class to generate random values using Perlin Noise
+ */
 public class NoiseGenerator {
     private double seed;
     private long default_size;
     private int[] p;
     private int[] permutation;
 
+    /**
+     * generate perlin noise
+     * @param seed seed to use for the randomness
+     */
     public NoiseGenerator(double seed) {
         this.seed = seed;
         init();
     }
 
-    public NoiseGenerator() {
-        this.seed = new Random().nextGaussian() * 255;
-        init();
-    }
-
+    /*
+    initialize parameters
+     */
     private void init() {
         // Initialize the permutation array.
         this.p = new int[512];
@@ -50,15 +54,27 @@ public class NoiseGenerator {
 
     }
 
+    /**
+     * function to set seed
+     * @param seed seed to set
+     */
     public void setSeed(double seed) {
         this.seed = seed;
     }
 
+    /**
+     * function to get seed
+     * @return the seed
+     */
     public double getSeed() {
         return this.seed;
     }
 
-
+    /**
+     * function to get the noise
+     * @param x coordinate
+     * @return the noise at x
+     */
     public double noise(double x) {
         double value = 0.0;
         double size = default_size;
@@ -72,6 +88,13 @@ public class NoiseGenerator {
         return value / initialSize;
     }
 
+    /**
+     * get smoothNoise
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     * @return the smooth noise
+     */
     public double smoothNoise(double x, double y, double z) {
         // Offset each coordinate by the seed value
         x += this.seed;
@@ -107,14 +130,23 @@ public class NoiseGenerator {
                                 grad(p[BB + 1], x - 1, 	y - 1, 	z - 1	))));
     }
 
+    /*
+    fade function
+     */
     private double fade(double t) {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
 
+    /*
+    lerp function
+     */
     private double lerp(double t, double a, double b) {
         return a + t * (b - a);
     }
 
+    /*
+    grad function
+     */
     private double grad(int hash, double x, double y, double z) {
         int h = hash & 15; // CONVERT LO 4 BITS OF HASH CODE
         double u = h < 8 ? x : y, // INTO 12 GRADIENT DIRECTIONS.
