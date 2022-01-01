@@ -8,10 +8,20 @@ import danogl.util.Vector2;
 
 import java.awt.*;
 
+/**
+ * class that represents a sky object for pepse game
+ */
 public class Sky {
     private static final Color BASIC_SKY_COLOR = Color.decode("#80C6E5");
     private static final String SKY_TAG = "sky";
 
+    /**
+     * function to create sky object for the game
+     * @param gameObjects game object collection
+     * @param windowDimensions window's dimensions
+     * @param skyLayer layer of the sky
+     * @return the created object
+     */
     public static GameObject create(GameObjectCollection gameObjects,
                                     Vector2 windowDimensions, int skyLayer){
         GameObject sky = new GameObject(

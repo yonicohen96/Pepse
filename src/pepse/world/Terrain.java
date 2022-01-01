@@ -10,8 +10,10 @@ import pepse.util.NoiseGenerator;
 
 import java.awt.*;
 
+/**
+ * class that represents a terrain object of pepse game
+ */
 public class Terrain {
-
     private static final String GROUND_TAG = "ground";
     private static final float SCALING_RATIO = 4.0f / 9;
     private static final float X0_HEIGHT_RATIO = 2.0f / 3;
@@ -26,6 +28,15 @@ public class Terrain {
     private final int upperGroundLayer;
     private final float groundHeightAtX0;
 
+    /**
+     * constructor of Terrain
+     * @param gameObjects game object collection
+     * @param lowerGroundLayer layer for terrain's lower objects
+     * @param upperGroundLayer layer for terrain's higher objects
+     * @param windowDimensions window's dimensions
+     * @param seed seed to be used for generating terrain's block
+     * @param rendererManager render manager object
+     */
     public Terrain(GameObjectCollection gameObjects,
                    int lowerGroundLayer, int upperGroundLayer, Vector2 windowDimensions,
                    int seed, ScreenRendererManager rendererManager){
@@ -38,10 +49,20 @@ public class Terrain {
         this.rendererManager = rendererManager;
     }
 
+    /**
+     * function to get the height of the ground at given x coordinate
+     * @param x the x coordinate to get the ground height at
+     * @return the height at the given x coordinate
+     */
     public float groundHeightAt(float x) {
         return (float) (groundHeightAtX0 + (scalingMaxAmplitude * noiseGenerator.noise(STRETCH_NOISE * x)));
     }
 
+    /**
+     * function to create terrain blocks in a given range
+     * @param minX left border for blocks' creation
+     * @param maxX right border for blocks' creation
+     */
     public void createInRange(int minX, int maxX) {
         int nextX = Block.roundToBlock(minX);
         while(nextX <= maxX){
@@ -51,6 +72,9 @@ public class Terrain {
         }
     }
 
+    /*
+    create a column of terrain blocks in a given x coordinate
+     */
     private void createTerrainColumn(int nextX) {
         int yHeight = (int) (Math.floor(groundHeightAt(nextX) / Block.SIZE) * Block.SIZE);
         createBlockAtXY(nextX, yHeight, upperGroundLayer);
@@ -61,6 +85,9 @@ public class Terrain {
         }
     }
 
+    /*
+    function to create a terrain block at given x,y coordinates
+     */
     private void createBlockAtXY(int blockX, int blockY, int layer) {
         Renderable renderable = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
