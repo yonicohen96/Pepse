@@ -22,6 +22,10 @@ import pepse.world.trees.Tree;
 import java.awt.*;
 import java.util.LinkedList;
 
+/**
+ * Class of the game manager, it initializes all the world objects, and handles all the logic behind creating
+ * and removing the extended screen renderables.
+ */
 public class PepseGameManager extends GameManager {
     private static final int SEED = 100;
     private static final float CYCLE_LENGTH = 30;
@@ -43,11 +47,22 @@ public class PepseGameManager extends GameManager {
     private Terrain terrain;
     private Tree tree;
 
-
+    /**
+     * main function of the program, starts the game by calling the run method
+     * @param args
+     */
     public static void main(String[] args) {
         new PepseGameManager().run();
     }
 
+    /**
+     * initializes all the GameObjects (world objects) using the given arguments, and creating the
+     * screenRenderManager that controls the extended screen renderables
+     * @param imageReader object that helps us to create the renderables of the GameObjects
+     * @param soundReader object that helps us to create the sounds of the GameObjects
+     * @param inputListener responsible for getting the input from the user
+     * @param windowController responsible for getting relevant info about the game screen
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
@@ -63,7 +78,9 @@ public class PepseGameManager extends GameManager {
 //        this.setCamera(objCamera);
     }
 
-
+/*
+    responsible for creating all the world GameObjects
+ */
     private void createWorldObjects(ImageReader imageReader, UserInputListener inputListener,
                                     WindowController windowController) {
         initializeTerrain(windowController);
@@ -72,20 +89,28 @@ public class PepseGameManager extends GameManager {
         initializeTrees();
         initializeAvatar(imageReader, inputListener, windowController);
     }
-
+/*
+    define general variables that using during the game run, the delta screen, that define the extended
+    screens, and the screenRendererManager that controls the extended screen renderables
+ */
     private void setGameProperties(WindowController windowController) {
         deltaScreen = (int) windowController.getWindowDimensions().x();
         screenRendererManager = new ScreenRendererManager(gameObjects(),
                 new LinkedList<>(), SCREEN_BUFFER_SIZE);
     }
-
+/*
+    sets all the collisions between different GameObjects by their layers
+ */
     private void setLayersCollisions() {
         gameObjects().layers().shouldLayersCollide(LEAF_LAYER, UPPER_GROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(LEAF_LAYER, STEM_LAYER, false);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, UPPER_GROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, STEM_LAYER, true);
     }
-
+/*
+    initialize all the renderables (all the world GameObjects) of the extended screens to the
+    gameObjectCollection and to the screenRenderManager
+ */
     private void renderScreens(WindowController windowController) {
         screenLeftX = 0;
         screenRightX = (int) windowController.getWindowDimensions().x();
@@ -95,7 +120,9 @@ public class PepseGameManager extends GameManager {
             terrain.createInRange(-deltaScreen + i * deltaScreen, i * deltaScreen);
         }
     }
-
+/*
+    initialize an instance of the game avatar and all its relevant fields and attributes
+ */
     private void initializeAvatar(ImageReader imageReader, UserInputListener inputListener,
                                   WindowController windowController) {
         avatar = Avatar.create(gameObjects(), AVATAR_LAYER, Vector2.ZERO, inputListener, imageReader);
@@ -109,21 +136,29 @@ public class PepseGameManager extends GameManager {
                 , windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
     }
-
+/*
+    initialize an instance of the Terrain that creates all the terrain blocks of the game
+ */
     private void initializeTerrain(WindowController windowController) {
         terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER,
                 windowController.getWindowDimensions(),
                 SEED, screenRendererManager);
     }
-
+/*
+    initialize an instance of the Sky class to the game
+ */
     private void initializeSky(WindowController windowController) {
         Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
     }
-
+/*
+    initialize an instance of the Tree class that creates all the trees in the game (stems and leaves)
+ */
     private void initializeTrees() {
         tree = new Tree(terrain, gameObjects(), STEM_LAYER, LEAF_LAYER, screenRendererManager);
     }
-
+/*
+    initialize all the day and night GameObjects to the game (night, sun, sunHalo)
+ */
     private void initializeDayNight(WindowController windowController) {
         Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(),
                 CYCLE_LENGTH / 2);
@@ -131,7 +166,13 @@ public class PepseGameManager extends GameManager {
                 CYCLE_LENGTH);
         SunHalo.create(gameObjects(), SUN_HALO_LAYER, sun, SUN_HALO_COLOR);
     }
-
+    /**
+     * Should be called once per frame.
+     * responsible for the fluent checks of the game, updating the extended screen renderables and defining
+     * the avatar location while falling into the ground.
+     * Params:
+     * deltaTime – The time elapsed, in seconds, since the last frame.
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -144,7 +185,10 @@ public class PepseGameManager extends GameManager {
             avatar.transform().setTopLeftCornerY(Math.min(avatar.getTopLeftCorner().y(), avatarTopLeftY));
         }
     }
-
+/*
+    checks for the avatar position regarding the screen edges, to determinate if we need to change the
+    extended screen and its renderables.
+ */
     private void checkBoundaries() {
         // check if need to change left
         if(avatar.getCenter().x() > screenRightX){
