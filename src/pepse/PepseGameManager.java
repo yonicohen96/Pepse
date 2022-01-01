@@ -103,12 +103,12 @@ public class PepseGameManager extends GameManager {
         super.update(deltaTime);
 
         checkBoundaries();
-
-
-        float avatarX = avatar.getTopLeftCorner().x();
-        float terrainAtX = (int) (Math.floor(terrain.groundHeightAt(avatarX) / Block.SIZE) * Block.SIZE);
-        float avatarTopLeftY = terrainAtX - avatar.getDimensions().y();
-        avatar.transform().setTopLeftCornerY(Math.min(avatar.getTopLeftCorner().y(), avatarTopLeftY));
+        if (avatar.getVelocity().y() > 0){
+            float avatarX = avatar.getTopLeftCorner().x();
+            float terrainAtX = (int) (Math.floor(terrain.groundHeightAt(avatarX) / Block.SIZE) * Block.SIZE);
+            float avatarTopLeftY = terrainAtX - avatar.getDimensions().y();
+            avatar.transform().setTopLeftCornerY(Math.min(avatar.getTopLeftCorner().y(), avatarTopLeftY));
+        }
     }
 
     private void checkBoundaries() {

@@ -11,11 +11,12 @@ import danogl.util.Vector2;
 import java.awt.event.KeyEvent;
 
 public class Avatar extends GameObject {
-    private static enum AvatarStates {FLY , WALK, STAND}
+    private static enum AvatarStatesNames {FLY , WALK, STAND}
     private static final Vector2 AVATAR_GROUND_SIZE = new Vector2(60, 95);
     private static final Vector2 AVATAR_FLY_SIZE = new Vector2(140, 140);
     private static final float MOVEMENT_SPEED = 300;
     private static final float JUMP_SPEED = 300;
+    private static final float FLIGHT_SPEED = 300;
     private static final float INITIAL_ENERGY = 100;
     private static final float ACCELERATION_Y = 500;
     private static final float ENERGY_CHANGE = 0.5f;
@@ -27,11 +28,14 @@ public class Avatar extends GameObject {
     private final float TIME_BETWEEN_CLIPS = 0.3f;
     private final AnimationRenderable avatarWalkAnimationRenderables;
     private final AnimationRenderable avatarFlyAnimationRenderables;
-    private Renderable avatarStaticRenderable;
+    private Renderable avatarStandRenderable;
     private float energy;
     private UserInputListener inputListener;
     private ImageReader imageReader;
-    private AvatarStates state;
+    private AvatarState curState;
+    private final AvatarState flyState;
+    private final AvatarState walkState;
+    private final AvatarState standState;
 
 
     /**
@@ -51,11 +55,16 @@ public class Avatar extends GameObject {
         this.transform().setAccelerationY(ACCELERATION_Y);
         this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         this.physics().setMass(1);
-        this.state = AvatarStates.WALK;
-
-        avatarStaticRenderable = imageReader.readImage(STAND_IMG_PATH, true);
+        avatarStandRenderable = imageReader.readImage(STAND_IMG_PATH, true);
         avatarWalkAnimationRenderables = new AnimationRenderable(createWalkAvatarRenderables(), TIME_BETWEEN_CLIPS);
         avatarFlyAnimationRenderables = new AnimationRenderable(createFlyAvatarRenderables(), TIME_BETWEEN_CLIPS/10);
+        this.flyState = new AvatarState(this::flyUpdate, avatarFlyAnimationRenderables, AVATAR_FLY_SIZE,
+                AvatarStatesNames.FLY);
+        this.walkState = new AvatarState(this::walkUpdate, avatarWalkAnimationRenderables, AVATAR_GROUND_SIZE,
+                AvatarStatesNames.WALK);
+        this.standState = new AvatarState(this::standUpdate, avatarStandRenderable, AVATAR_GROUND_SIZE,
+                AvatarStatesNames.STAND);
+        this.curState = this.standState;
     }
 
     private Renderable[] createFlyAvatarRenderables() {
@@ -85,39 +94,26 @@ public class Avatar extends GameObject {
         return renderables;
     }
 
-    @Override
-    public void update(float deltaTime) {
-        super.update(deltaTime);
-        horizontalMovement();
-        verticalMovement();
-
-        if (getVelocity().x() > 0){
-            renderer().setIsFlippedHorizontally(false);
-        }
-        else if (getVelocity().x() < 0){
-            renderer().setIsFlippedHorizontally(true);
-        }
-        else if (getVelocity().equals(Vector2.ZERO)){
-            // standing
-            this.stand();
-
-        }
-//        else{
-//            renderer().setRenderable(avatarStaticRenderable);
+//    @Override
+//    public void update2(float deltaTime) {
+//        super.update(deltaTime);
+//        horizontalMovement();
+//        verticalMovement();
+//
+//        if (getVelocity().x() > 0){
+//            renderer().setIsFlippedHorizontally(false);
 //        }
-        // todo delete prints
-//        System.out.println(energy);
+//        else if (getVelocity().x() < 0){
+//            renderer().setIsFlippedHorizontally(true);
+//        }
+//        else if (getVelocity().equals(Vector2.ZERO)){
+//            // standing
+//            this.stand();
+//
+//        }
+//    }
 
-    }
 
-    private void stand(){
-        if (this.state != AvatarStates.STAND){
-            this.state = AvatarStates.STAND;
-            renderer().setRenderable(avatarStaticRenderable);
-            this.transform().setDimensions(AVATAR_GROUND_SIZE);
-        }
-
-    }
 
     private void verticalMovement() {
         if(inputListener.isKeyPressed(KeyEvent.VK_SPACE)){
@@ -125,7 +121,7 @@ public class Avatar extends GameObject {
                 // flying
                 energy = Math.max(0, energy - ENERGY_CHANGE);
                 this.transform().setVelocityY(-JUMP_SPEED);
-                this.fly();
+//                this.fly();
             }
             else {
                 //this.walk();
@@ -135,9 +131,6 @@ public class Avatar extends GameObject {
                 }
             }
             return;
-//        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0){
-//            setVelocity(getVelocity().add(Vector2.UP.mult(JUMP_SPEED)));
-//            System.out.println(getVelocity().y());
         }
         // falling / on the ground
         if (this.getVelocity().y() == 0 && this.energy < INITIAL_ENERGY){
@@ -146,22 +139,6 @@ public class Avatar extends GameObject {
         }
     }
 
-    private void walk() {
-        if (this.state != AvatarStates.WALK){
-            this.state = AvatarStates.WALK;
-            renderer().setRenderable(avatarWalkAnimationRenderables);
-            this.transform().setDimensions(AVATAR_GROUND_SIZE);
-        }
-    }
-
-    private void fly() {
-        if (this.state != AvatarStates.FLY){
-            this.state = AvatarStates.FLY;
-            renderer().setRenderable(avatarFlyAnimationRenderables);
-            this.transform().setDimensions(AVATAR_FLY_SIZE);
-        }
-
-    }
 
 
     private void horizontalMovement() {
@@ -174,8 +151,128 @@ public class Avatar extends GameObject {
         }
         setVelocity(movementDir.mult(MOVEMENT_SPEED).add(new Vector2(0, getVelocity().y())));
 
-        if(getVelocity().x() != 0){
-            this.walk();
+//        if(getVelocity().x() != 0){
+//            this.walk();
+//        }
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // todo - delta this comment  from here - new code
+
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        horizontalMovement();
+        AvatarState newState = checkState();
+
+        // update state if needed
+        if (curState != newState) {
+            curState = newState;
+            curState.setState();
+        }
+        curState.update();
+//
+//        verticalMovement();
+//
+//        if (getVelocity().x() > 0){
+//            renderer().setIsFlippedHorizontally(false);
+//        }
+//        else if (getVelocity().x() < 0){
+//            renderer().setIsFlippedHorizontally(true);
+//        }
+//        else if (getVelocity().equals(Vector2.ZERO)){
+//            // standing
+//            this.stand();
+
+        }
+
+    private AvatarState checkState() {
+        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE)){
+            if (inputListener.isKeyPressed(KeyEvent.VK_SHIFT) && energy > 0){
+                //this.transform().setVelocityY(-JUMP_SPEED);
+                return flyState;
+            }
+            else {
+
+//                return AvatarStatesNames.WALK;
+                if (getVelocity().y() == 0) {
+                     //jumping
+                    this.transform().setVelocityY(-JUMP_SPEED);
+                }
+            }
+//            return null;
+        }
+        // falling / on the ground
+        if (this.getVelocity().y() == 0 && this.energy <= INITIAL_ENERGY){
+            if(getVelocity().x() ==0){
+                return standState;
+            }
+
+//            energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
+
+        }
+        return walkState;
+    }
+
+
+
+    private void checkChangeDirection(){
+        if (getVelocity().x() > 0){
+            renderer().setIsFlippedHorizontally(false);
+        }
+        else if (getVelocity().x() < 0){
+            renderer().setIsFlippedHorizontally(true);
+        }
+    }
+
+
+    // todo make sure that in updates - changes x directions
+
+    private void flyUpdate(){
+        energy = Math.max(0, energy - ENERGY_CHANGE);
+        transform().setVelocityY(-FLIGHT_SPEED);
+        checkChangeDirection();
+    }
+
+    private void walkUpdate(){
+        if (getVelocity().y() <= 0){
+            energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
+        }
+        checkChangeDirection();
+    }
+
+    private void standUpdate(){
+        if (getVelocity().y() <= 0){
+            energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
+        }
+    }
+
+
+    private class AvatarState{
+
+
+        private Runnable updateOperations;
+        private Renderable renderable;
+        private Vector2 dimensions;
+        private AvatarStatesNames stateName;
+
+        public AvatarState(Runnable updateOperations, Renderable renderable, Vector2 dimensions,
+                           AvatarStatesNames state) {
+            this.updateOperations = updateOperations;
+            this.renderable = renderable;
+            this.dimensions = dimensions;
+            this.stateName = state;
+        }
+
+        private void update(){
+            updateOperations.run();
+        }
+
+        private void setState(){
+            curState = this;
+            renderer().setRenderable(renderable);
+            setDimensions(dimensions);
         }
 
     }
