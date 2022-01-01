@@ -15,6 +15,9 @@ import java.awt.*;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * class that represents a tree objects manager for pepse game
+ */
 public class Tree {
     private static final String STEM_BLOCK_TAG = "stem block";
     private static final Color STEM_COLOR = new Color(100, 50, 20);
@@ -22,7 +25,7 @@ public class Tree {
     private static final float LEAF_SCALE_DELTA = 0.5f;
     private static final float FADEOUT_TIME = 10f;
     private static final int LEAF_DEATH_RANGE = 5;
-    private static final int LEAF_LIVE_RANGE = 500;
+    private static final int LEAF_LIVE_RANGE = 300;
     private static final int STEM_BLOCKS_NUMBER_RANGE = 9;
     private static final int MIN_STEM_BLOCK_NUMBER = 6;
     private static final int MAX_LEAVES_CREATION_RANK = 100;
@@ -45,6 +48,14 @@ public class Tree {
     private final int leafLayer;
     private final ScreenRendererManager rendererManager;
 
+    /**
+     * constructor
+     * @param terrain Terrain object - to locate trees above the terrain
+     * @param gameObjects game object collection
+     * @param stemLayer layer allocated for stem
+     * @param leafLayer layer allocated for leaves
+     * @param rendererManager renderer manager object
+     */
     public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer,
                 ScreenRendererManager rendererManager) {
         this.terrain  = terrain;
@@ -54,6 +65,11 @@ public class Tree {
         this.rendererManager = rendererManager;
     }
 
+    /**
+     * function to create trees in given range
+     * @param minX left x border
+     * @param maxX right x border
+     */
     public void createInRange(int minX, int maxX) {
         int nextX = Block.roundToBlock(minX);
         while(nextX <= maxX){
@@ -65,6 +81,9 @@ public class Tree {
         }
     }
 
+    /*
+    function to create a single tree
+     */
     private void createTree(int x) {
         int treeBaseY = (int) terrain.groundHeightAt(x) - Block.SIZE;
         int treeSize = (new Random(x).nextInt(STEM_BLOCKS_NUMBER_RANGE * Block.SIZE) +
@@ -73,6 +92,9 @@ public class Tree {
         createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
     }
 
+    /*
+    function ot create a single's tree leaves
+     */
     private void createLeaves(int x, int treetop, int treeSize) {
         Random leavesRandom = new Random(x);
         int delta = Block.roundToBlock((treeSize * Block.SIZE / 3));
@@ -85,6 +107,9 @@ public class Tree {
         }
     }
 
+    /*
+    function to create a single tree's stem
+     */
     private void createStem(int x, int treeBaseY, int treeSize) {
         for (int i = 0; i < treeSize; i++) {
             createStemBlock(x, treeBaseY);
@@ -92,6 +117,9 @@ public class Tree {
         }
     }
 
+    /*
+    function to create a single leaf
+     */
     private void createLeaf(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
         Leaf leaf = new Leaf(new Vector2(blockX, blockY), renderable);
@@ -104,22 +132,34 @@ public class Tree {
         rendererManager.addGameObject(leaf, leafLayer);
     }
 
+    /*
+    function to start a life cycle of a leaf
+     */
     private void startLifeCycle(Leaf leaf) {
         leaf.resetPosition();
         float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ LEAF_RANK_RATIO);
         new ScheduledTask(leaf, lifeRandWaitTime, false, () -> leafLifeCycleAction(leaf));
     }
 
+    /*
+    a function to perform leaf's  life cycle's actions
+     */
     private void leafLifeCycleAction(Leaf leaf) {
         leaf.transform().setVelocityY(LEAF_FALL_VELOCITY);
         leaf.renderer().fadeOut(FADEOUT_TIME, () -> postFadeActions(leaf));
     }
 
+    /*
+    post fade actions of a leaf
+     */
     private void postFadeActions(Leaf leaf) {
         float deathTime = (float) random.nextInt(LEAF_DEATH_RANGE);
         new ScheduledTask(leaf, deathTime, false, () -> startLifeCycle(leaf));
     }
 
+    /*
+    function to create a stem block
+     */
     private void createStemBlock(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(STEM_COLOR);
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
@@ -128,17 +168,25 @@ public class Tree {
         rendererManager.addGameObject(gameObject, stemLayer);
     }
 
+    /*
+    function to allocate a tree in a given x coordinate
+     */
     private boolean allocateTreeInX(int x){
         Random treeAllocateRand = new Random(Objects.hash(x, GENERAL_SEED));
         return treeAllocateRand.nextInt(MAX_RANDOM_VALUE) <= TREE_DENSITY_PERCENTAGE;
-        }
+    }
 
-
+    /*
+    leaf actions - rotation and scaling
+     */
     private void windLeafActions(GameObject leaf){
         setRotateTransition(leaf);
         setScalingTransition(leaf);
     }
 
+    /*
+    function to set rotation transition for a leaf
+     */
     private void setRotateTransition(GameObject leaf) {
         new Transition<>(
                 leaf, // the game object being changed
@@ -151,6 +199,9 @@ public class Tree {
                 null); // nothing further to execute upon reaching final value
     }
 
+    /*
+    function to set scaling transition for a leaf
+     */
     private void setScalingTransition(GameObject leaf) {
         new Transition<>(
                 leaf, // the game object being changed
@@ -163,6 +214,9 @@ public class Tree {
                 null); // nothing further to execute upon reaching final value
     }
 
+    /*
+    a function to change leaf's bounds
+     */
     private Vector2 changeBounds(Float value, float x) {
         float size =  x + value;
         if (size < LEAF_MIN_SIZE){
@@ -173,6 +227,5 @@ public class Tree {
         }
         return new Vector2(size, size);
     }
-
 
 }
