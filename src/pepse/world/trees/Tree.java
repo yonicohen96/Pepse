@@ -9,6 +9,7 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.util.NoiseGenerator;
 import pepse.world.Block;
+import pepse.world.ScreenRendererManager;
 import pepse.world.Terrain;
 
 import java.awt.*;
@@ -90,7 +91,7 @@ public class Tree {
                 , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(leaf, leafLayer);
-        rendererManager.addGameObject(leaf);
+        rendererManager.addGameObject(leaf, leafLayer);
     }
 
     private void startLifeCycle(Leaf leaf) {
@@ -116,7 +117,7 @@ public class Tree {
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(gameObject, stemLayer);
-        rendererManager.addGameObject(gameObject);
+        rendererManager.addGameObject(gameObject, stemLayer);
     }
 
     private boolean allocateTreeInX(int x){

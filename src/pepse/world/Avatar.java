@@ -20,7 +20,7 @@ public class Avatar extends GameObject {
     private static final float FLIGHT_SPEED = 300;
     private static final float INITIAL_ENERGY = 100;
     private static final float ACCELERATION_Y = 500;
-    private static final float ENERGY_CHANGE = 2f;
+    private static final float ENERGY_CHANGE = 0.5f;
     private static final String WALK_ANIMATION_PATH = "assets/trump/trump%s.png";
     private static final String STAND_IMG_PATH = "assets/trump/trump1.png";
     private static final int FLY_ANIMATION_NUMBER = 11;

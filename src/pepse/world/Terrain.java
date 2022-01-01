@@ -7,7 +7,6 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.util.ColorSupplier;
 import pepse.util.NoiseGenerator;
-import pepse.world.trees.ScreenRendererManager;
 
 import java.awt.*;
 
@@ -69,7 +68,7 @@ public class Terrain {
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(GROUND_TAG);
         gameObjects.addGameObject(gameObject, layer);
-        rendererManager.addGameObject(gameObject);
+        rendererManager.addGameObject(gameObject, layer);
     }
 
     // todo extract to utils
