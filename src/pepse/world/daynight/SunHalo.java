@@ -11,6 +11,9 @@ import java.awt.*;
 
 public class SunHalo extends GameObject {
 
+    private static final float SUN_HALO_RATIO = 1.5f;
+    private static final String SUN_HALO_TAG = "sunHalo";
+
     /**
      * Construct a new GameObject instance.
      *
@@ -22,12 +25,10 @@ public class SunHalo extends GameObject {
     public SunHalo(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
         this.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
-        setTag("sunHalo");
     }
 
     private static void updateHalo(float deltaTime, GameObject sun, GameObject sunHalo){
         sunHalo.setCenter(sun.getCenter());
-        // todo if time permits - change color to red
     }
 
     public static GameObject create(
@@ -35,16 +36,21 @@ public class SunHalo extends GameObject {
             int layer,
             GameObject sun,
             Color color){
-        Renderable sunImg = new OvalRenderable(color);
-        Vector2 haloSize = sun.getDimensions().mult(1.5f);
-        GameObject sunHalo = new SunHalo(Vector2.ZERO, haloSize, sunImg);
-        gameObjects.addGameObject(sunHalo, layer);
+        GameObject sunHalo = createInstance(gameObjects, layer, sun, color);
         sunHalo.addComponent(deltaTime -> updateHalo(deltaTime, sun, sunHalo));
+        sun.setTag(SUN_HALO_TAG);
         return sunHalo;
+
     }
 
-
-
+    private static GameObject createInstance(GameObjectCollection gameObjects, int layer, GameObject sun,
+                                             Color color) {
+        Renderable sunImg = new OvalRenderable(color);
+        Vector2 haloSize = sun.getDimensions().mult(SUN_HALO_RATIO);
+        GameObject sunHalo = new SunHalo(Vector2.ZERO, haloSize, sunImg);
+        gameObjects.addGameObject(sunHalo, layer);
+        return sunHalo;
+    }
 
 
 }

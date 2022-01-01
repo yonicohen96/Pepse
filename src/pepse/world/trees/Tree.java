@@ -13,6 +13,7 @@ import pepse.world.ScreenRendererManager;
 import pepse.world.Terrain;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.Random;
 
 public class Tree {
@@ -24,6 +25,21 @@ public class Tree {
     private static final float FADEOUT_TIME = 10f;
     private static final int LEAF_DEATH_RANGE = 5;
     private static final int LEAF_LIVE_RANGE = 500;
+    private static final int STEM_BLOCKS_NUMBER_RANGE = 9;
+    private static final int MIN_STEM_BLOCK_NUMBER = 6;
+    private static final int MAX_LEAVES_CREATION_RANK = 100;
+    private static final int LEAVES_CREATION_RANK = 80;
+    private static final int LEAF_FALL_RANGE = 50;
+    private static final float LEAF_RANK_RATIO = 5f;
+    private static final int LEAF_FALL_VELOCITY = 50;
+    private static final int MAX_RANDOM_VALUE = 100;
+    private static final int TREE_DENSITY_PERCENTAGE = 5;
+    private static final int WIND_TRANSITION_RANGE = 5;
+    private static final float LEAF_ROTATE_TRANSITION_TIME = 1.1f;
+    private static final float LEAF_SCALE_TRANSITION_TIME = 0.8f;
+    private static final int LEAF_MIN_SIZE = 27;
+    private static final int LEAF_MAX_SIZE = 40;
+    private static final int GENERAL_SEED = 60;
     private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
@@ -42,7 +58,7 @@ public class Tree {
     }
 
     public void createInRange(int minX, int maxX) {
-        int nextX = getMinX(minX);
+        int nextX = Block.roundToBlock(minX);
         while(nextX <= maxX){
             // create blocks in X:
             if (allocateTreeInX(nextX)){
@@ -54,18 +70,19 @@ public class Tree {
 
     private void createTree(int x) {
         int treeBaseY = (int) terrain.groundHeightAt(x) - Block.SIZE;
-        int treeSize = (new Random(x).nextInt(270) + 180) / Block.SIZE;
+        int treeSize = (new Random(x).nextInt(STEM_BLOCKS_NUMBER_RANGE * Block.SIZE) +
+                MIN_STEM_BLOCK_NUMBER * Block.SIZE) / Block.SIZE;
         createStem(x, treeBaseY, treeSize);
         createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
     }
 
     private void createLeaves(int x, int treetop, int treeSize) {
-        int delta = getMinX(treeSize * Block.SIZE / 3);
+        Random leavesRandom = new Random(x);
+        int delta = Block.roundToBlock((treeSize * Block.SIZE / 3));
         for (int i = x - delta ; i <= x + delta; i+=Block.SIZE) {
             for (int j = treetop - delta; j <= treetop + delta ; j+=Block.SIZE) {
-                if (random.nextInt(10) < 8){
-                    createLeavesBlock(i, j);
-                    // todo - set more reasonable constants for leaves
+                if (leavesRandom.nextInt(MAX_LEAVES_CREATION_RANK) < LEAVES_CREATION_RANK){
+                    createLeaf(i, j);
                 }
             }
         }
@@ -73,20 +90,16 @@ public class Tree {
 
     private void createStem(int x, int treeBaseY, int treeSize) {
         for (int i = 0; i < treeSize; i++) {
-            //System.out.println(treeSize);
             createStemBlock(x, treeBaseY);
             treeBaseY -= Block.SIZE;
         }
     }
 
-    // todo unite all function of creations of blocks
-    private void createLeavesBlock(int blockX, int blockY) {
+    private void createLeaf(int blockX, int blockY) {
         Renderable renderable = new RectangleRenderable(LEAVES_COLOR);
         Leaf leaf = new Leaf(new Vector2(blockX, blockY), renderable);
         startLifeCycle(leaf);
-
-        // todo check if need to save states for leaves - if not fallen,
-        float windRandWaitTime = (random.nextInt(50)/ 5f);
+        float windRandWaitTime = (random.nextInt(LEAF_FALL_RANGE)/ LEAF_RANK_RATIO);
         new ScheduledTask(leaf, windRandWaitTime, false
                 , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
@@ -96,14 +109,12 @@ public class Tree {
 
     private void startLifeCycle(Leaf leaf) {
         leaf.resetPosition();
-        float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ 5f);
-        new ScheduledTask(leaf, lifeRandWaitTime, false
-                , () -> leafLifeCycleAction(leaf));
+        float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ LEAF_RANK_RATIO);
+        new ScheduledTask(leaf, lifeRandWaitTime, false, () -> leafLifeCycleAction(leaf));
     }
 
     private void leafLifeCycleAction(Leaf leaf) {
-        // TODO change for sinus fall
-        leaf.transform().setVelocityY(50);
+        leaf.transform().setVelocityY(LEAF_FALL_VELOCITY);
         leaf.renderer().fadeOut(FADEOUT_TIME, () -> postFadeActions(leaf));
     }
 
@@ -121,51 +132,47 @@ public class Tree {
     }
 
     private boolean allocateTreeInX(int x){
-        double noiseVal = noiseGenerator.noise(x);
-        int thirdDigit = getNDigit(noiseVal, 3);
-        int forthDigit = getNDigit(noiseVal, 4);
-        return thirdDigit == 3 && forthDigit > 4;
-    }
-
-    private int getNDigit(double num, int n){
-        return  (int) (num * Math.pow(10, n)) % 10;
-    }
-
-    private int getMinX(int minX){
-        if (minX >= 0){
-            return (minX / Block.SIZE) * Block.SIZE;
+        Random treeAllocateRand = new Random(Objects.hash(x, GENERAL_SEED));
+        return treeAllocateRand.nextInt(MAX_RANDOM_VALUE) <= TREE_DENSITY_PERCENTAGE;
         }
-        return ((minX / Block.SIZE) - 1) * Block.SIZE;
-    }
+
 
     private void windLeafActions(GameObject leaf){
+        setRotateTransition(leaf);
+        setScalingTransition(leaf);
+    }
+
+    private void setRotateTransition(GameObject leaf) {
         new Transition<Float>(
                 leaf, // the game object being changed
                 (angle) -> leaf.renderer().setRenderableAngle(angle), // the method to call
-                (float) (-5 * Math.PI), // initial transition value
-                (float) (5 * Math.PI), // final transition value
+                (float) (-WIND_TRANSITION_RANGE * Math.PI), // initial transition value
+                (float) (WIND_TRANSITION_RANGE * Math.PI), // final transition value
                 Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
-                1.1f, // transition sun
+                LEAF_ROTATE_TRANSITION_TIME, // transition sun
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
+    }
+
+    private void setScalingTransition(GameObject leaf) {
         new Transition<Float>(
                 leaf, // the game object being changed
                 (value) -> leaf.setDimensions(changeBounds(value, leaf.getDimensions().x())), // the method to call
                 -LEAF_SCALE_DELTA, // initial transition value
                 LEAF_SCALE_DELTA, // final transition value
                 Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
-                0.8f, // transition sun
+                LEAF_SCALE_TRANSITION_TIME, // transition sun
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
     }
 
     private Vector2 changeBounds(Float value, float x) {
         float size =  x + value;
-        if (size < 20){
-            size = 20;
+        if (size < LEAF_MIN_SIZE){
+            size = LEAF_MIN_SIZE;
         }
-        if (size > 40){
-            size = 40;
+        if (size > LEAF_MAX_SIZE){
+            size = LEAF_MAX_SIZE;
         }
         return new Vector2(size, size);
     }

@@ -13,4 +13,12 @@ public class Block extends GameObject {
         physics().preventIntersectionsFromDirection(Vector2.ZERO);
         physics().setMass(GameObjectPhysics.IMMOVABLE_MASS);
     }
+
+    public static int roundToBlock(int minX){
+        if (minX >= 0){
+            return (minX / Block.SIZE) * Block.SIZE;
+        }
+        return ((minX / Block.SIZE) - 1) * Block.SIZE;
+    }
+
 }

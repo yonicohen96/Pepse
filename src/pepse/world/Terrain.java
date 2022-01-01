@@ -45,7 +45,7 @@ public class Terrain {
     }
 
     public void createInRange(int minX, int maxX) {
-        int nextX = getMinX(minX);
+        int nextX = Block.roundToBlock(minX);
         while(nextX <= maxX){
             // create blocks in X:
             createTerrainColumn(nextX);
@@ -70,16 +70,5 @@ public class Terrain {
         gameObjects.addGameObject(gameObject, layer);
         rendererManager.addGameObject(gameObject, layer);
     }
-
-    // todo extract to utils
-    private int getMinX(int minX){
-        if (minX >= 0){
-            return (minX / Block.SIZE) * Block.SIZE;
-        }
-        return ((minX / Block.SIZE) - 1) * Block.SIZE;
-    }
-    
-    
-
 
 }

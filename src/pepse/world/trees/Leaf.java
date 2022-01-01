@@ -1,19 +1,22 @@
 package pepse.world.trees;
 
-import danogl.components.GameObjectPhysics;
-import danogl.components.Transition;
+
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.world.Block;
 
+
 public class Leaf extends Block {
+    private static final int LEAF_MASS = 1;
+    private static final int LEAF_MOTION_AMPLITUDE = 12;
+    private static final int LEAF_MOTION_FREQUENCY = 10;
     private final Vector2 originalPosition;
 
 
     public Leaf(Vector2 topLeftCorner, Renderable renderable) {
         super(topLeftCorner, renderable);
         this.originalPosition = topLeftCorner;
-        physics().setMass(1);
+        physics().setMass(LEAF_MASS);
     }
 
     public void resetPosition(){
@@ -25,9 +28,10 @@ public class Leaf extends Block {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        // todo check if to cha ge to states and to stop velocity if collided with ground
         if (this.getVelocity().y() > 0){
-            this.transform().setTopLeftCornerX((float) (originalPosition.x() + Math.sin(this.getCenter().y() / 10) * 12));
+            this.transform().setTopLeftCornerX((float) (originalPosition.x() +
+                    Math.sin(this.getCenter().y() / LEAF_MOTION_FREQUENCY) * LEAF_MOTION_AMPLITUDE));
         }
     }
+
 }
