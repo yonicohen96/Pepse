@@ -60,7 +60,7 @@ public class Sun extends GameObject {
     }
 
     private static void setTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
-        new Transition<Float>(
+        new Transition<>(
                 sun, // the game object being changed
                 (angle) -> sun.setCenter(calcSunPosition(windowDimensions, angle)), // the method to call
                 SUN_INITIAL_TRANSITION, // initial transition value

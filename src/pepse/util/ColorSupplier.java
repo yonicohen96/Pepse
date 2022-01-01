@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public final class ColorSupplier {
     private static final int DEFAULT_COLOR_DELTA = 10;
-    private final static Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * Returns a color similar to baseColor, with a default delta.

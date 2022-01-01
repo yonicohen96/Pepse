@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class ScreenRendererManager {
     private int indexToFill;
-    public LinkedList<ArrayList<Map.Entry<GameObject, Integer>>> gameObjectsList;
-    private GameObjectCollection gameObjectCollection;
-    private int screenBufferSize;
+    private final LinkedList<ArrayList<Map.Entry<GameObject, Integer>>> gameObjectsList;
+    private final GameObjectCollection gameObjectCollection;
+    private final int screenBufferSize;
 
     public ScreenRendererManager(GameObjectCollection gameObjectCollection,
                                  LinkedList<ArrayList<Map.Entry<GameObject, Integer>>> gameObjectsList,

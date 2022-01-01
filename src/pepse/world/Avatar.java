@@ -15,7 +15,7 @@ public class Avatar extends GameObject {
 
     public static final int AVATAR_MASS = 1;
 
-    private static enum AvatarStatesNames {FLY, FALL, WALK, STAND}
+    private enum AvatarStatesNames {FLY, FALL, WALK, STAND}
     private static final Vector2 AVATAR_SIZE = new Vector2(60, 95);
     private static final Vector2 AVATAR_FLY_SIZE = new Vector2(140, 140);
     private static final float MOVEMENT_SPEED = 300;
@@ -26,20 +26,17 @@ public class Avatar extends GameObject {
     private static final float ENERGY_CHANGE = 0.5f;
     private static final String WALK_ANIMATION_PATH = "assets/trump/trump%s.png";
     private static final String STAND_IMG_PATH = "assets/trump/trump1.png";
-    private static final String SOUND_BULLSHIT_READER = "assets/trumpsound/BULLSHIT.mp3";
-    private static final String SOUND_WIN_READER = "assets/trumpsound/WIN.mp3";
-    private static final String SOUND_SMART_READER = "assets/trumpsound/SMART.mp3";
-    private static final String SOUND_RICH_READER = "assets/trumpsound/RICH.mp3";
+//    private static final String SOUND_BULLSHIT_READER = "assets/trumpsound/BULLSHIT.mp3";
+//    private static final String SOUND_WIN_READER = "assets/trumpsound/WIN.mp3";
+//    private static final String SOUND_SMART_READER = "assets/trumpsound/SMART.mp3";
+//    private static final String SOUND_RICH_READER = "assets/trumpsound/RICH.mp3";
     private static final int FLY_ANIMATION_NUMBER = 11;
     private static final String FLY_ANIMATION_PATH = "assets/flyingTrump/flyingTrump%s.jpg";
     private final int WALK_ANIMATION_NUMBER = 3;
     private final float TIME_BETWEEN_CLIPS = 0.3f;
-    private final AnimationRenderable avatarWalkAnimationRenderables;
-    private final AnimationRenderable avatarFlyAnimationRenderables;
-    private Renderable avatarStandRenderable;
     private float energy;
-    private UserInputListener inputListener;
-    private ImageReader imageReader;
+    private final UserInputListener inputListener;
+    private final ImageReader imageReader;
     private AvatarState curState;
     private final AvatarState flyState;
     private final AvatarState fallState;
@@ -69,9 +66,9 @@ public class Avatar extends GameObject {
         this.inputListener = inputListener;
         this.imageReader = imageReader;
         this.energy = INITIAL_ENERGY;
-        avatarStandRenderable = imageReader.readImage(STAND_IMG_PATH, true);
-        avatarWalkAnimationRenderables = new AnimationRenderable(createWalkAvatarRenderables(), TIME_BETWEEN_CLIPS / WALK_ANIMATION_NUMBER);
-        avatarFlyAnimationRenderables = new AnimationRenderable(createFlyAvatarRenderables(),
+        Renderable avatarStandRenderable = imageReader.readImage(STAND_IMG_PATH, true);
+        AnimationRenderable avatarWalkAnimationRenderables = new AnimationRenderable(createWalkAvatarRenderables(), TIME_BETWEEN_CLIPS / WALK_ANIMATION_NUMBER);
+        AnimationRenderable avatarFlyAnimationRenderables = new AnimationRenderable(createFlyAvatarRenderables(),
                 TIME_BETWEEN_CLIPS / FLY_ANIMATION_NUMBER);
         setAvatarProperties();
         this.flyState = new AvatarState(this::flyUpdate, avatarFlyAnimationRenderables, AVATAR_FLY_SIZE,
@@ -213,7 +210,7 @@ public class Avatar extends GameObject {
         private final Vector2 dimensions;
         private final AvatarStatesNames stateName;
 
-        public AvatarState(Runnable updateOperations, Renderable renderable, Vector2 dimensions,
+        private AvatarState(Runnable updateOperations, Renderable renderable, Vector2 dimensions,
                            AvatarStatesNames state) {
             this.updateOperations = updateOperations;
             this.renderable = renderable;

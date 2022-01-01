@@ -20,9 +20,7 @@ import pepse.world.ScreenRendererManager;
 import pepse.world.trees.Tree;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class PepseGameManager extends GameManager {
     private static final int SEED = 100;
@@ -35,14 +33,12 @@ public class PepseGameManager extends GameManager {
     private static final int LOWER_GROUND_LAYER = Layer.STATIC_OBJECTS;
     private static final int UPPER_GROUND_LAYER = Layer.STATIC_OBJECTS + 1;
     private static final int AVATAR_LAYER = Layer.BACKGROUND + 4;
-    public static final Color SUN_HALO_COLOR = new Color(255, 255, 0, 20);
-    public static final float CAMERA_FACTOR = 0.5f;
+    private static final Color SUN_HALO_COLOR = new Color(255, 255, 0, 20);
+    private static final float CAMERA_FACTOR = 0.5f;
     private ScreenRendererManager screenRendererManager;
     private int screenLeftX;
     private int screenRightX;
     private int deltaScreen;
-
-    private LinkedList<GameObject[]> screenFrames;
     private Avatar avatar;
     private Terrain terrain;
     private Tree tree;
@@ -60,7 +56,7 @@ public class PepseGameManager extends GameManager {
         createWorldObjects(imageReader, inputListener, windowController);
         renderScreens(windowController);
         setLayersCollisions();
-//
+
 //        Camera objCamera = new Camera(avatar, Vector2.ZERO,
 //        windowController.getWindowDimensions().mult(8f),
 //        windowController.getWindowDimensions());
@@ -79,7 +75,7 @@ public class PepseGameManager extends GameManager {
     private void setGameProperties(WindowController windowController) {
         deltaScreen = (int) windowController.getWindowDimensions().x();
         screenRendererManager = new ScreenRendererManager(gameObjects(),
-                new LinkedList<ArrayList<Map.Entry<GameObject, Integer>>>(), SCREEN_BUFFER_SIZE);
+                new LinkedList<>(), SCREEN_BUFFER_SIZE);
     }
 
     private void setLayersCollisions() {
@@ -120,7 +116,7 @@ public class PepseGameManager extends GameManager {
     }
 
     private void initializeSky(WindowController windowController) {
-        GameObject sky = Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
+        Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
     }
 
     private void initializeTrees() {

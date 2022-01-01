@@ -7,7 +7,6 @@ import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import pepse.util.NoiseGenerator;
 import pepse.world.Block;
 import pepse.world.ScreenRendererManager;
 import pepse.world.Terrain;
@@ -17,7 +16,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Tree {
-    private static final double TREE_SEED = 14;
     private static final String STEM_BLOCK_TAG = "stem block";
     private static final Color STEM_COLOR = new Color(100, 50, 20);
     private static final Color LEAVES_COLOR = new Color(50, 200, 30);
@@ -40,13 +38,12 @@ public class Tree {
     private static final int LEAF_MIN_SIZE = 27;
     private static final int LEAF_MAX_SIZE = 40;
     private static final int GENERAL_SEED = 60;
-    private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
     private final GameObjectCollection gameObjects;
-    private int stemLayer;
-    private int leafLayer;
-    private ScreenRendererManager rendererManager;
+    private final int stemLayer;
+    private final int leafLayer;
+    private final ScreenRendererManager rendererManager;
 
     public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer,
                 ScreenRendererManager rendererManager) {
@@ -143,25 +140,25 @@ public class Tree {
     }
 
     private void setRotateTransition(GameObject leaf) {
-        new Transition<Float>(
+        new Transition<>(
                 leaf, // the game object being changed
                 (angle) -> leaf.renderer().setRenderableAngle(angle), // the method to call
                 (float) (-WIND_TRANSITION_RANGE * Math.PI), // initial transition value
                 (float) (WIND_TRANSITION_RANGE * Math.PI), // final transition value
                 Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
-                LEAF_ROTATE_TRANSITION_TIME, // transition sun
+                LEAF_ROTATE_TRANSITION_TIME,
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
     }
 
     private void setScalingTransition(GameObject leaf) {
-        new Transition<Float>(
+        new Transition<>(
                 leaf, // the game object being changed
                 (value) -> leaf.setDimensions(changeBounds(value, leaf.getDimensions().x())), // the method to call
                 -LEAF_SCALE_DELTA, // initial transition value
                 LEAF_SCALE_DELTA, // final transition value
                 Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
-                LEAF_SCALE_TRANSITION_TIME, // transition sun
+                LEAF_SCALE_TRANSITION_TIME,
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
     }

@@ -2,7 +2,6 @@ package pepse.world.daynight;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
-import danogl.collisions.Layer;
 import danogl.components.CoordinateSpace;
 import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
@@ -37,13 +36,13 @@ public class Night {
     }
 
     private static void setTransition(float cycleLength, GameObject nightBlock) {
-        new Transition<Float>(
+        new Transition<>(
                 nightBlock, // the game object being changed
                 nightBlock.renderer()::setOpaqueness, // the method to call
                 INITIAL_TRANSITION_VALUE, // initial transition value
                 MIDNIGHT_OPACITY, // final transition value
                 Transition.CUBIC_INTERPOLATOR_FLOAT, // use a cubic interpolator
-                cycleLength, // transtion fully over half a day
+                cycleLength, // transition fully over half a day
                 Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                 null); // nothing further to execute upon reaching final value
     }
