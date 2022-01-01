@@ -36,6 +36,7 @@ public class PepseGameManager extends GameManager {
     private static final int UPPER_GROUND_LAYER = Layer.STATIC_OBJECTS + 1;
     private static final int AVATAR_LAYER = Layer.BACKGROUND + 4;
     public static final Color SUN_HALO_COLOR = new Color(255, 255, 0, 20);
+    public static final float CAMERA_FACTOR = 0.5f;
     private ScreenRendererManager screenRendererManager;
     private int screenLeftX;
     private int screenRightX;
@@ -59,14 +60,15 @@ public class PepseGameManager extends GameManager {
         createWorldObjects(imageReader, inputListener, windowController);
         renderScreens(windowController);
         setLayersCollisions();
-
-        Camera objCamera = new Camera(avatar, Vector2.ZERO,
-        windowController.getWindowDimensions().mult(8f),
-        windowController.getWindowDimensions());
-        this.setCamera(objCamera);
+//
+//        Camera objCamera = new Camera(avatar, Vector2.ZERO,
+//        windowController.getWindowDimensions().mult(8f),
+//        windowController.getWindowDimensions());
+//        this.setCamera(objCamera);
     }
 
-    private void createWorldObjects(ImageReader imageReader, UserInputListener inputListener, WindowController windowController) {
+    private void createWorldObjects(ImageReader imageReader, UserInputListener inputListener,
+                                    WindowController windowController) {
         initializeTerrain(windowController);
         initializeSky(windowController);
         initializeDayNight(windowController);
@@ -97,20 +99,23 @@ public class PepseGameManager extends GameManager {
         }
     }
 
-    private void initializeAvatar(ImageReader imageReader, UserInputListener inputListener, WindowController windowController) {
+    private void initializeAvatar(ImageReader imageReader, UserInputListener inputListener,
+                                  WindowController windowController) {
         avatar = Avatar.create(gameObjects(), AVATAR_LAYER, Vector2.ZERO, inputListener, imageReader);
         float avatarX = windowController.getWindowDimensions().x() / 2;
         float avatarY = terrain.groundHeightAt(windowController.getWindowDimensions().x() / 2) -
                 Block.SIZE - avatar.getDimensions().y();
         Vector2 initialAvatarLocation = new Vector2(avatarX, avatarY);
         avatar.setTopLeftCorner(initialAvatarLocation);
-        setCamera(new Camera(avatar, windowController.getWindowDimensions().mult(0.5f).add(initialAvatarLocation.mult(-1))
+        setCamera(new Camera(avatar, windowController.getWindowDimensions().mult(CAMERA_FACTOR).
+                add(initialAvatarLocation.mult(-1))
                 , windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
     }
 
     private void initializeTerrain(WindowController windowController) {
-        terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER, windowController.getWindowDimensions(),
+        terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER,
+                windowController.getWindowDimensions(),
                 SEED, screenRendererManager);
     }
 
@@ -123,8 +128,10 @@ public class PepseGameManager extends GameManager {
     }
 
     private void initializeDayNight(WindowController windowController) {
-        Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH / 2);
-        GameObject sun = Sun.create(gameObjects(), SUN_LAYER, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(),
+                CYCLE_LENGTH / 2);
+        GameObject sun = Sun.create(gameObjects(), SUN_LAYER, windowController.getWindowDimensions(),
+                CYCLE_LENGTH);
         SunHalo.create(gameObjects(), SUN_HALO_LAYER, sun, SUN_HALO_COLOR);
     }
 
@@ -143,7 +150,6 @@ public class PepseGameManager extends GameManager {
 
     private void checkBoundaries() {
         // check if need to change left
-
         if(avatar.getCenter().x() > screenRightX){
             screenRendererManager.removeGameObjects(0);
             screenLeftX = screenRightX;
@@ -152,16 +158,12 @@ public class PepseGameManager extends GameManager {
             tree.createInRange(screenRightX, screenRightX + deltaScreen);
         }
         if(avatar.getCenter().x() < screenLeftX){
-            screenRendererManager.removeGameObjects(2);
+            screenRendererManager.removeGameObjects(SCREEN_BUFFER_SIZE - 1);
             screenRightX = screenLeftX;
             screenLeftX -= deltaScreen;
             terrain.createInRange(screenLeftX - deltaScreen, screenLeftX);
             tree.createInRange(screenLeftX - deltaScreen, screenLeftX);
         }
-
-
-
-
     }
 
 
