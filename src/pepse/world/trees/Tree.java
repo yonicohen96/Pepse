@@ -22,19 +22,22 @@ public class Tree {
     private static final float LEAF_SCALE_DELTA = 0.5f;
     private static final float FADEOUT_TIME = 10f;
     private static final int LEAF_DEATH_RANGE = 5;
-    private static final int LEAF_LIVE_RANGE = 50;
+    private static final int LEAF_LIVE_RANGE = 500;
     private static NoiseGenerator noiseGenerator = new NoiseGenerator(TREE_SEED);
     private final Terrain terrain;
     private final static Random random = new Random();
     private final GameObjectCollection gameObjects;
     private int stemLayer;
     private int leafLayer;
+    private ScreenRendererManager rendererManager;
 
-    public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer) {
+    public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer,
+                ScreenRendererManager rendererManager) {
         this.terrain  = terrain;
         this.gameObjects = gameObjects;
         this.stemLayer = stemLayer;
         this.leafLayer = leafLayer;
+        this.rendererManager = rendererManager;
     }
 
     public void createInRange(int minX, int maxX) {
@@ -69,7 +72,7 @@ public class Tree {
 
     private void createStem(int x, int treeBaseY, int treeSize) {
         for (int i = 0; i < treeSize; i++) {
-            System.out.println(treeSize);
+            //System.out.println(treeSize);
             createStemBlock(x, treeBaseY);
             treeBaseY -= Block.SIZE;
         }
@@ -82,16 +85,17 @@ public class Tree {
         startLifeCycle(leaf);
 
         // todo check if need to save states for leaves - if not fallen,
-        float windRandWaitTime = (random.nextInt(100)/ 10f);
+        float windRandWaitTime = (random.nextInt(50)/ 5f);
         new ScheduledTask(leaf, windRandWaitTime, false
                 , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(leaf, leafLayer);
+        rendererManager.addGameObject(leaf);
     }
 
     private void startLifeCycle(Leaf leaf) {
         leaf.resetPosition();
-        float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ 10f);
+        float lifeRandWaitTime = (random.nextInt(LEAF_LIVE_RANGE)/ 5f);
         new ScheduledTask(leaf, lifeRandWaitTime, false
                 , () -> leafLifeCycleAction(leaf));
     }
@@ -112,6 +116,7 @@ public class Tree {
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
         gameObjects.addGameObject(gameObject, stemLayer);
+        rendererManager.addGameObject(gameObject);
     }
 
     private boolean allocateTreeInX(int x){

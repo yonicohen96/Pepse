@@ -5,29 +5,33 @@ import danogl.collisions.GameObjectCollection;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
-import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Avatar extends GameObject {
-    private static final Vector2 AVATAR_SIZE = new Vector2(60, 95);
+    private static enum AvatarStates {FLY , WALK, STAND}
+    private static final Vector2 AVATAR_GROUND_SIZE = new Vector2(60, 95);
+    private static final Vector2 AVATAR_FLY_SIZE = new Vector2(140, 140);
     private static final float MOVEMENT_SPEED = 300;
     private static final float JUMP_SPEED = 300;
     private static final float INITIAL_ENERGY = 100;
     private static final float ACCELERATION_Y = 500;
     private static final float ENERGY_CHANGE = 0.5f;
-    private static final String ANIMATION_PATH = "assets/trump/trump%s.png";
+    private static final String WALK_ANIMATION_PATH = "assets/trump/trump%s.png";
     private static final String STAND_IMG_PATH = "assets/trump/trump1.png";
-    private final int ANIMATION_NUMBER = 3;
+    private static final int FLY_ANIMATION_NUMBER = 11;
+    private static final String FLY_ANIMATION_PATH = "assets/flyingTrump/flyingTrump%s.jpg";
+    private final int WALK_ANIMATION_NUMBER = 3;
     private final float TIME_BETWEEN_CLIPS = 0.3f;
-    private final AnimationRenderable avatarAnimationRenderables;
+    private final AnimationRenderable avatarWalkAnimationRenderables;
+    private final AnimationRenderable avatarFlyAnimationRenderables;
     private Renderable avatarStaticRenderable;
     private float energy;
     private UserInputListener inputListener;
     private ImageReader imageReader;
+    private AvatarStates state;
 
 
     /**
@@ -47,8 +51,19 @@ public class Avatar extends GameObject {
         this.transform().setAccelerationY(ACCELERATION_Y);
         this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         this.physics().setMass(1);
+        this.state = AvatarStates.WALK;
+
         avatarStaticRenderable = imageReader.readImage(STAND_IMG_PATH, true);
-        avatarAnimationRenderables = new AnimationRenderable(createAvatarRenderables(), TIME_BETWEEN_CLIPS);;
+        avatarWalkAnimationRenderables = new AnimationRenderable(createWalkAvatarRenderables(), TIME_BETWEEN_CLIPS);
+        avatarFlyAnimationRenderables = new AnimationRenderable(createFlyAvatarRenderables(), TIME_BETWEEN_CLIPS/10);
+    }
+
+    private Renderable[] createFlyAvatarRenderables() {
+        Renderable [] renderables = new Renderable[FLY_ANIMATION_NUMBER];
+        for (int i = 1; i < FLY_ANIMATION_NUMBER + 1; i++) {
+            renderables[i - 1] = imageReader.readImage(String.format(FLY_ANIMATION_PATH, i), true);
+        }
+        return renderables;
     }
 
     public static Avatar create(GameObjectCollection gameObjects,
@@ -57,15 +72,15 @@ public class Avatar extends GameObject {
                                 ImageReader imageReader){
 //        Renderable AvatarImg = imageReader.readImage(String.format(ANIMATION_PATH, "1"), true);
         Renderable AvatarImg = imageReader.readImage(STAND_IMG_PATH, true);
-        Avatar avatar = new Avatar(topLeftCorner, AVATAR_SIZE, AvatarImg, inputListener, imageReader);
+        Avatar avatar = new Avatar(topLeftCorner, AVATAR_GROUND_SIZE, AvatarImg, inputListener, imageReader);
         gameObjects.addGameObject(avatar, layer);
         return avatar;
     }
 
-    private Renderable[] createAvatarRenderables() {
-        Renderable[] renderables = new Renderable[ANIMATION_NUMBER];
-        for (int i = 1; i < ANIMATION_NUMBER + 1; i++) {
-            renderables[i - 1] = imageReader.readImage(String.format(ANIMATION_PATH, i), true);
+    private Renderable[] createWalkAvatarRenderables() {
+        Renderable[] renderables = new Renderable[WALK_ANIMATION_NUMBER];
+        for (int i = 1; i < WALK_ANIMATION_NUMBER + 1; i++) {
+            renderables[i - 1] = imageReader.readImage(String.format(WALK_ANIMATION_PATH, i), true);
         }
         return renderables;
     }
@@ -75,44 +90,79 @@ public class Avatar extends GameObject {
         super.update(deltaTime);
         horizontalMovement();
         verticalMovement();
+
         if (getVelocity().x() > 0){
-            renderer().setRenderable(avatarAnimationRenderables);
             renderer().setIsFlippedHorizontally(false);
         }
         else if (getVelocity().x() < 0){
-            renderer().setRenderable(avatarAnimationRenderables);
             renderer().setIsFlippedHorizontally(true);
         }
-        else{
-            renderer().setRenderable(avatarStaticRenderable);
+        else if (getVelocity().equals(Vector2.ZERO)){
+            // standing
+            this.stand();
+
         }
+//        else{
+//            renderer().setRenderable(avatarStaticRenderable);
+//        }
         // todo delete prints
 //        System.out.println(energy);
+
+    }
+
+    private void stand(){
+        if (this.state != AvatarStates.STAND){
+            this.state = AvatarStates.STAND;
+            renderer().setRenderable(avatarStaticRenderable);
+            this.transform().setDimensions(AVATAR_GROUND_SIZE);
+        }
 
     }
 
     private void verticalMovement() {
         if(inputListener.isKeyPressed(KeyEvent.VK_SPACE)){
             if (inputListener.isKeyPressed(KeyEvent.VK_SHIFT) && energy > 0){
+                // flying
                 energy = Math.max(0, energy - ENERGY_CHANGE);
                 this.transform().setVelocityY(-JUMP_SPEED);
-                System.out.println(this.getVelocity().y());
+                this.fly();
             }
-            else if (getVelocity().y() == 0){
-                this.transform().setVelocityY(-JUMP_SPEED);
+            else {
+                //this.walk();
+                if (getVelocity().y() == 0) {
+                    // jumping
+                    this.transform().setVelocityY(-JUMP_SPEED);
+                }
             }
-
-
+            return;
 //        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0){
 //            setVelocity(getVelocity().add(Vector2.UP.mult(JUMP_SPEED)));
 //            System.out.println(getVelocity().y());
         }
-        else{
-            if (this.getVelocity().y() == 0 && this.energy < INITIAL_ENERGY){
-                energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
-            }
+        // falling / on the ground
+        if (this.getVelocity().y() == 0 && this.energy < INITIAL_ENERGY){
+            energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
+
         }
     }
+
+    private void walk() {
+        if (this.state != AvatarStates.WALK){
+            this.state = AvatarStates.WALK;
+            renderer().setRenderable(avatarWalkAnimationRenderables);
+            this.transform().setDimensions(AVATAR_GROUND_SIZE);
+        }
+    }
+
+    private void fly() {
+        if (this.state != AvatarStates.FLY){
+            this.state = AvatarStates.FLY;
+            renderer().setRenderable(avatarFlyAnimationRenderables);
+            this.transform().setDimensions(AVATAR_FLY_SIZE);
+        }
+
+    }
+
 
     private void horizontalMovement() {
         Vector2 movementDir = Vector2.ZERO;
@@ -122,6 +172,11 @@ public class Avatar extends GameObject {
         if(inputListener.isKeyPressed(KeyEvent.VK_RIGHT)){
             movementDir = movementDir.add(Vector2.RIGHT);
         }
-            setVelocity(movementDir.mult(MOVEMENT_SPEED).add(new Vector2(0, getVelocity().y())));
+        setVelocity(movementDir.mult(MOVEMENT_SPEED).add(new Vector2(0, getVelocity().y())));
+
+        if(getVelocity().x() != 0){
+            this.walk();
+        }
+
     }
 }

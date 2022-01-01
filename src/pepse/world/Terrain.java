@@ -7,6 +7,7 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.util.ColorSupplier;
 import pepse.util.NoiseGenerator;
+import pepse.world.trees.ScreenRendererManager;
 
 import java.awt.*;
 
@@ -17,6 +18,8 @@ public class Terrain {
     private static final float X0_HEIGHT_RATIO = 2.0f / 3;
     private static final double STRETCH_NOISE = 0.05;
     private final NoiseGenerator noiseGenerator;
+    private int seed;
+    private ScreenRendererManager rendererManager;
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
     private final float scalingMaxAmplitude;
@@ -27,13 +30,15 @@ public class Terrain {
 
     public Terrain(GameObjectCollection gameObjects,
                    int lowerGroundLayer, int upperGroundLayer, Vector2 windowDimensions,
-                   int seed){
+                   int seed, ScreenRendererManager rendererManager){
         this.gameObjects = gameObjects;
         this.upperGroundLayer = upperGroundLayer;
         this.lowerGroundLayer = lowerGroundLayer;
         this.groundHeightAtX0 = windowDimensions.y() * X0_HEIGHT_RATIO;
         this.scalingMaxAmplitude = windowDimensions.y() * SCALING_RATIO;
         this.noiseGenerator = new NoiseGenerator(seed);
+        this.seed = seed;
+        this.rendererManager = rendererManager;
     }
 
     public float groundHeightAt(float x) {
@@ -64,6 +69,7 @@ public class Terrain {
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(GROUND_TAG);
         gameObjects.addGameObject(gameObject, layer);
+        rendererManager.addGameObject(gameObject);
     }
 
     // todo extract to utils
