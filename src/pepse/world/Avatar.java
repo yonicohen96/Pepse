@@ -11,10 +11,12 @@ import danogl.util.Vector2;
 
 import java.awt.event.KeyEvent;
 
+/**
+ * class that represents an avatar object for pepse game
+ */
 public class Avatar extends GameObject {
 
-    public static final int AVATAR_MASS = 1;
-
+    private static final int AVATAR_MASS = 1;
     private enum AvatarStatesNames {FLY, FALL, WALK, STAND}
     private static final Vector2 AVATAR_SIZE = new Vector2(60, 95);
     private static final Vector2 AVATAR_FLY_SIZE = new Vector2(140, 140);
@@ -45,6 +47,11 @@ public class Avatar extends GameObject {
     private boolean collide = true;
 
 
+    /**
+     * function be executed on collision
+     * @param other the other object in the collision
+     * @param collision collision object
+     */
     @Override
     public void onCollisionEnter(GameObject other, Collision collision) {
         super.onCollisionEnter(other, collision);
@@ -82,14 +89,18 @@ public class Avatar extends GameObject {
         this.curState = this.standState;
     }
 
-
-
+    /*
+    function to set avatar properties
+     */
     private void setAvatarProperties() {
         this.transform().setAccelerationY(ACCELERATION_Y);
         this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         this.physics().setMass(AVATAR_MASS);
     }
 
+    /*
+    function to create the fly avatar renderables
+     */
     private Renderable[] createFlyAvatarRenderables() {
         Renderable [] renderables = new Renderable[FLY_ANIMATION_NUMBER];
         for (int i = 1; i < FLY_ANIMATION_NUMBER + 1; i++) {
@@ -99,6 +110,15 @@ public class Avatar extends GameObject {
         return renderables;
     }
 
+    /**
+     * function to create an avatar
+     * @param gameObjects game object collection
+     * @param layer layer of the avatar
+     * @param topLeftCorner initial location for the avatar
+     * @param inputListener input listener object
+     * @param imageReader image reader object
+     * @return returns the created avatar object
+     */
     public static Avatar create(GameObjectCollection gameObjects,
                                 int layer, Vector2 topLeftCorner,
                                 UserInputListener inputListener,
@@ -109,6 +129,9 @@ public class Avatar extends GameObject {
         return avatar;
     }
 
+    /*
+    function to crate walk avatar renderables
+     */
     private Renderable[] createWalkAvatarRenderables() {
         Renderable[] renderables = new Renderable[WALK_ANIMATION_NUMBER];
         for (int i = 1; i < WALK_ANIMATION_NUMBER + 1; i++) {
@@ -118,7 +141,9 @@ public class Avatar extends GameObject {
         return renderables;
     }
 
-
+    /*
+    function to set the horizontal movements
+     */
     private void horizontalMovement() {
         Vector2 movementDir = Vector2.ZERO;
         if(inputListener.isKeyPressed(KeyEvent.VK_LEFT)){
@@ -130,34 +155,44 @@ public class Avatar extends GameObject {
         setVelocity(movementDir.mult(MOVEMENT_SPEED).add(new Vector2(0, getVelocity().y())));
     }
 
+    /**
+     * update function the avatar to be called - checks input and perform the appropriate operations
+     * @param deltaTime time delta
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
         horizontalMovement();
         AvatarState newState = checkState();
-        // update state if needed
-        changeState(newState);
-        // jumping
-        jump();
+        changeStateIfChanged(newState);
+        checkJump();
         curState.update();
 
-        }
+    }
 
-    private void jump() {
+    /*
+    function to check if avatar should jump, and if so - jump
+     */
+    private void checkJump() {
         if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && curState.stateName !=
                 AvatarStatesNames.FLY && getVelocity().y() == 0){
-            // check if can jump while reaching top of flight
             this.transform().setVelocityY(-JUMP_SPEED);
         }
     }
 
-    private void changeState(AvatarState newState) {
+    /*
+    function to check if state need to be changed
+     */
+    private void changeStateIfChanged(AvatarState newState) {
         if (curState != newState) {
             curState = newState;
             curState.setState();
         }
     }
 
+    /*
+    function to check what should be the current state
+     */
     private AvatarState checkState() {
         if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && inputListener.isKeyPressed(KeyEvent.VK_SHIFT)
                 && energy > 0) {
@@ -173,8 +208,10 @@ public class Avatar extends GameObject {
         return standState;
     }
 
-
-    private void checkChangeDirection(){
+    /*
+    function to perform change in the direction of the renderable if needed
+     */
+    private void renderChangeDirection(){
         if (getVelocity().x() > 0){
             renderer().setIsFlippedHorizontally(false);
         }
@@ -183,33 +220,50 @@ public class Avatar extends GameObject {
         }
     }
 
+    /*
+    function to perform updates on flying state
+     */
     private void flyUpdate(){
         energy = Math.max(0, energy - ENERGY_CHANGE);
         transform().setVelocityY(-FLIGHT_SPEED);
-        checkChangeDirection();
+        renderChangeDirection();
         collide = false;
     }
 
+    /*
+    function to perform updates on falling state
+     */
     private void fallUpdate(){
-        checkChangeDirection();
+        renderChangeDirection();
     }
 
+    /*
+    function to perform updates on walking state
+     */
     private void walkUpdate(){
         energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
-        checkChangeDirection();
+        renderChangeDirection();
     }
 
+    /*
+    function to perform updates on standing state
+     */
     private void standUpdate(){
         energy = Math.min(INITIAL_ENERGY, energy + ENERGY_CHANGE);
     }
 
-
+    /*
+    an inner class of objects that hold the operations and attributes of different states of the avatar
+     */
     private class AvatarState{
         private final Runnable updateOperations;
         private final Renderable renderable;
         private final Vector2 dimensions;
         private final AvatarStatesNames stateName;
 
+        /*
+        constructor of the inner class
+         */
         private AvatarState(Runnable updateOperations, Renderable renderable, Vector2 dimensions,
                            AvatarStatesNames state) {
             this.updateOperations = updateOperations;
@@ -218,10 +272,16 @@ public class Avatar extends GameObject {
             this.stateName = state;
         }
 
+        /*
+        function to be called on avatar's updates to perform the specific updates of the current state
+         */
         private void update(){
             updateOperations.run();
         }
 
+        /*
+        function to set the object's state
+         */
         private void setState(){
             curState = this;
             renderer().setRenderable(renderable);
@@ -229,4 +289,5 @@ public class Avatar extends GameObject {
         }
 
     }
+
 }
