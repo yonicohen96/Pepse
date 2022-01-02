@@ -68,7 +68,7 @@ public class PepseGameManager extends GameManager {
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         setGameProperties(windowController);
-        createWorldObjects(imageReader, inputListener, windowController);
+        createWorldObjects(imageReader, inputListener, windowController, soundReader);
         renderScreens(windowController);
         setLayersCollisions();
 
@@ -82,12 +82,12 @@ public class PepseGameManager extends GameManager {
     responsible for creating all the world GameObjects
  */
     private void createWorldObjects(ImageReader imageReader, UserInputListener inputListener,
-                                    WindowController windowController) {
+                                    WindowController windowController, SoundReader soundReader) {
         initializeTerrain(windowController);
         initializeSky(windowController);
         initializeDayNight(windowController);
         initializeTrees();
-        initializeAvatar(imageReader, inputListener, windowController);
+        initializeAvatar(imageReader, inputListener, windowController, soundReader);
     }
 /*
     define general variables that using during the game run, the delta screen, that define the extended
@@ -124,7 +124,7 @@ public class PepseGameManager extends GameManager {
     initialize an instance of the game avatar and all its relevant fields and attributes
  */
     private void initializeAvatar(ImageReader imageReader, UserInputListener inputListener,
-                                  WindowController windowController) {
+                                  WindowController windowController, SoundReader soundReader) {
         avatar = Avatar.create(gameObjects(), AVATAR_LAYER, Vector2.ZERO, inputListener, imageReader);
         float avatarX = windowController.getWindowDimensions().x() / 2;
         float avatarY = terrain.groundHeightAt(windowController.getWindowDimensions().x() / 2) -
@@ -135,6 +135,7 @@ public class PepseGameManager extends GameManager {
                 add(initialAvatarLocation.mult(-1))
                 , windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
+        avatar.setSoundReader(soundReader);
     }
 /*
     initialize an instance of the Terrain that creates all the terrain blocks of the game

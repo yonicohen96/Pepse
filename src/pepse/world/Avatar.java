@@ -3,13 +3,18 @@ package pepse.world;
 import danogl.GameObject;
 import danogl.collisions.Collision;
 import danogl.collisions.GameObjectCollection;
+import danogl.components.ScheduledTask;
 import danogl.gui.ImageReader;
+import danogl.gui.Sound;
+import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * class that represents an avatar object for pepse game
@@ -28,10 +33,11 @@ public class Avatar extends GameObject {
     private static final float ENERGY_CHANGE = 0.5f;
     private static final String WALK_ANIMATION_PATH = "assets/trump/trump%s.png";
     private static final String STAND_IMG_PATH = "assets/trump/trump1.png";
-//    private static final String SOUND_BULLSHIT_READER = "assets/trumpsound/BULLSHIT.mp3";
-//    private static final String SOUND_WIN_READER = "assets/trumpsound/WIN.mp3";
-//    private static final String SOUND_SMART_READER = "assets/trumpsound/SMART.mp3";
-//    private static final String SOUND_RICH_READER = "assets/trumpsound/RICH.mp3";
+    private static final String SOUND_BULLSHIT_READER = "assets/trumpsound/BULLSHIT.wav";
+    private static final String SOUND_WIN_READER = "assets/trumpsound/WIN.wav";
+    private static final String SOUND_SMART_READER = "assets/trumpsound/SMART.wav";
+    private static final String SOUND_RICH_READER = "assets/trumpsound/RICH.wav";
+    private static final int AVATAR_SOUND_NUMBER = 4;
     private static final int FLY_ANIMATION_NUMBER = 11;
     private static final String FLY_ANIMATION_PATH = "assets/flyingTrump/flyingTrump%s.jpg";
     private final int WALK_ANIMATION_NUMBER = 3;
@@ -44,6 +50,9 @@ public class Avatar extends GameObject {
     private final AvatarState fallState;
     private final AvatarState walkState;
     private final AvatarState standState;
+    private SoundReader soundReader ;
+    private static boolean isSoundPlaying = false;
+    private ArrayList<Sound> soundArrayList = new ArrayList<>(AVATAR_SOUND_NUMBER);
     private boolean collide = true;
 
 
@@ -87,6 +96,23 @@ public class Avatar extends GameObject {
         this.standState = new AvatarState(this::standUpdate, avatarStandRenderable, AVATAR_SIZE,
                 AvatarStatesNames.STAND);
         this.curState = this.standState;
+
+    }
+
+    /**
+     * sets the soundReader of the avatar to allow it make sounds
+     * @param soundReader the soundReader object.
+     */
+    public void setSoundReader(SoundReader soundReader){
+        this.soundReader = soundReader;
+        setAvatarSounds();
+    }
+
+    private void setAvatarSounds() {
+        soundArrayList.add(soundReader.readSound(SOUND_BULLSHIT_READER));
+        soundArrayList.add(soundReader.readSound(SOUND_SMART_READER));
+        soundArrayList.add(soundReader.readSound(SOUND_RICH_READER));
+        soundArrayList.add(soundReader.readSound(SOUND_WIN_READER));
     }
 
     /*
@@ -119,8 +145,9 @@ public class Avatar extends GameObject {
      * @param imageReader image reader object
      * @return returns the created avatar object
      */
-    public static Avatar create(GameObjectCollection gameObjects, int layer,
-                                Vector2 topLeftCorner, UserInputListener inputListener,
+    public static Avatar create(GameObjectCollection gameObjects,
+                                int layer, Vector2 topLeftCorner,
+                                UserInputListener inputListener,
                                 ImageReader imageReader){
         Renderable AvatarImg = imageReader.readImage(STAND_IMG_PATH, true);
         Avatar avatar = new Avatar(topLeftCorner, AVATAR_SIZE, AvatarImg, inputListener, imageReader);
@@ -165,8 +192,20 @@ public class Avatar extends GameObject {
         AvatarState newState = checkState();
         changeStateIfChanged(newState);
         checkJump();
-        curState.update();
-
+        curState.updateState();
+        checkSounds();
+    }
+/*
+    check if the user is pressing the key "P" for playing avatar sounds
+ */
+    private void checkSounds() {
+        Random rand = new Random();
+        if(inputListener.isKeyPressed(KeyEvent.VK_P) && !isSoundPlaying){
+            soundArrayList.get(rand.nextInt(AVATAR_SOUND_NUMBER)).play();
+            isSoundPlaying = true;
+            new ScheduledTask(this, 1, false
+                    , () -> isSoundPlaying = false);
+        }
     }
 
     /*
@@ -274,7 +313,7 @@ public class Avatar extends GameObject {
         /*
         function to be called on avatar's updates to perform the specific updates of the current state
          */
-        private void update(){
+        private void updateState(){
             updateOperations.run();
         }
 

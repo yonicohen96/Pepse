@@ -21,8 +21,8 @@ public class Sun extends GameObject {
     private static final float SUN_RATIO_Y = 6;
 
     private static final String SUN_TAG = "sun";
-    private static final float SUN_INITIAL_TRANSITION = 0f;
-    private static final double FINAL_TRANSITION_CYCLE = 2 * Math.PI;
+    private static final float SUN_INITIAL_MOVEMENT_TRANSITION = 0f;
+    private static final double FINAL_MOVEMENT_TRANSITION_CYCLE = 2 * Math.PI;
     private static final double SUN_OVAL_RATIO = 1.8;
 
     /**
@@ -52,13 +52,34 @@ public class Sun extends GameObject {
             Vector2 windowDimensions,
             float cycleLength) {
         GameObject sun = createInstance(gameObjects, layer, windowDimensions);
-        setTransition(windowDimensions, cycleLength, sun);
+        setMovementTransition(windowDimensions, cycleLength, sun);
+        setColorTransition(windowDimensions, cycleLength, sun);
         sun.setTag(SUN_TAG);
         return sun;
     }
+/*
+    function to set the changing sun color transition
+ */
+    private static void setColorTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
+        new Transition<Float>(
+                sun, // the game object being changed
+                (angle) -> Sun.setSunColor(sun, angle), // the method to call
+                SUN_INITIAL_MOVEMENT_TRANSITION, // initial transition value
+                (float) FINAL_MOVEMENT_TRANSITION_CYCLE, // final transition value
+                Transition.CUBIC_INTERPOLATOR_FLOAT, // use simple linear interpolator
+                cycleLength, // transition sun
+                Transition.TransitionType.TRANSITION_LOOP,
+                null); // nothing further to execute upon reaching final value
+
+    }
+
+    private static void setSunColor(GameObject sun, float sunAngle) {
+        sun.renderer().setRenderable(
+                new OvalRenderable(new Color(255,(int)(126*Math.cos(sunAngle)+126),0)));
+    }
 
     /*
-    function to create an instance of sun
+    function to create an instance of the sun
      */
     private static GameObject createInstance(GameObjectCollection gameObjects, int layer,
                                              Vector2 windowDimensions) {
@@ -71,14 +92,14 @@ public class Sun extends GameObject {
     }
 
     /*
-    function to set transition
+    function to set the transition of the sun movement
      */
-    private static void setTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
+    private static void setMovementTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
         new Transition<>(
                 sun, // the game object being changed
                 (angle) -> sun.setCenter(calcSunPosition(windowDimensions, angle)), // the method to call
-                SUN_INITIAL_TRANSITION, // initial transition value
-                (float) FINAL_TRANSITION_CYCLE, // final transition value
+                SUN_INITIAL_MOVEMENT_TRANSITION, // initial transition value
+                (float) FINAL_MOVEMENT_TRANSITION_CYCLE, // final transition value
                 Transition.LINEAR_INTERPOLATOR_FLOAT, // use simple linear interpolator
                 cycleLength, // transition sun
                 Transition.TransitionType.TRANSITION_LOOP,
