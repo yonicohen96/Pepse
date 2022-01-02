@@ -91,7 +91,6 @@ public class Terrain {
         Renderable renderable = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(GROUND_TAG);
-        gameObjects.addGameObject(gameObject, layer);
         rendererManager.addGameObject(gameObject, layer);
     }
 

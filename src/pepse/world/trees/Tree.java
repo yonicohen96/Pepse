@@ -128,7 +128,6 @@ public class Tree {
         new ScheduledTask(leaf, windRandWaitTime, false
                 , () -> windLeafActions(leaf));
         leaf.setTag(STEM_BLOCK_TAG);
-        gameObjects.addGameObject(leaf, leafLayer);
         rendererManager.addGameObject(leaf, leafLayer);
     }
 
@@ -164,7 +163,6 @@ public class Tree {
         Renderable renderable = new RectangleRenderable(STEM_COLOR);
         GameObject gameObject = new Block(new Vector2(blockX, blockY), renderable);
         gameObject.setTag(STEM_BLOCK_TAG);
-        gameObjects.addGameObject(gameObject, stemLayer);
         rendererManager.addGameObject(gameObject, stemLayer);
     }
 

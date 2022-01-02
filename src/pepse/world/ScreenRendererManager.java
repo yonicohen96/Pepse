@@ -29,7 +29,6 @@ public class ScreenRendererManager {
                                  int screenBufferSize) {
         this.gameObjectCollection = gameObjectCollection;
         this.screenBufferSize = screenBufferSize;
-
         this.indexToFill = 0;
         this.gameObjectsList = gameObjectsList;
         for (int i = 0; i < screenBufferSize; i++) {
@@ -54,6 +53,8 @@ public class ScreenRendererManager {
      */
     public void addGameObject(GameObject object, Integer layer){
         gameObjectsList.get(indexToFill).add(new AbstractMap.SimpleEntry<>(object, layer));
+        gameObjectCollection.addGameObject(object, layer);
+
     }
 
     /**
