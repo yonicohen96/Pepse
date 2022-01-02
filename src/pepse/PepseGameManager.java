@@ -34,7 +34,6 @@ public class PepseGameManager extends GameManager {
     private static final int SUN_HALO_LAYER = Layer.BACKGROUND + 2;
     private static final int STEM_LAYER = Layer.BACKGROUND + 3;
     private static final int LEAF_LAYER = Layer.BACKGROUND + 4;
-    private static final int LOWER_GROUND_LAYER = Layer.STATIC_OBJECTS;
     private static final int UPPER_GROUND_LAYER = Layer.STATIC_OBJECTS + 1;
     private static final int AVATAR_LAYER = Layer.BACKGROUND + 4;
     private static final Color SUN_HALO_COLOR = new Color(255, 255, 0, 20);
@@ -141,9 +140,9 @@ public class PepseGameManager extends GameManager {
     initialize an instance of the Terrain that creates all the terrain blocks of the game
  */
     private void initializeTerrain(WindowController windowController) {
-        terrain = new Terrain(LOWER_GROUND_LAYER, UPPER_GROUND_LAYER,
-                windowController.getWindowDimensions(),
-                SEED, screenRendererManager);
+        terrain = new Terrain(gameObjects(), UPPER_GROUND_LAYER,
+                windowController.getWindowDimensions(), SEED);
+        terrain.setRendererManager(screenRendererManager);
     }
 /*
     initialize an instance of the Sky class to the game
