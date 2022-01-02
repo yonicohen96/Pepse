@@ -43,7 +43,6 @@ public class Tree {
     private static final int GENERAL_SEED = 60;
     private final Terrain terrain;
     private final static Random random = new Random();
-    private final GameObjectCollection gameObjects;
     private final int stemLayer;
     private final int leafLayer;
     private final ScreenRendererManager rendererManager;
@@ -51,15 +50,13 @@ public class Tree {
     /**
      * constructor
      * @param terrain Terrain object - to locate trees above the terrain
-     * @param gameObjects game object collection
      * @param stemLayer layer allocated for stem
      * @param leafLayer layer allocated for leaves
      * @param rendererManager renderer manager object
      */
-    public Tree(Terrain terrain, GameObjectCollection gameObjects, int stemLayer, int leafLayer,
+    public Tree(Terrain terrain, int stemLayer, int leafLayer,
                 ScreenRendererManager rendererManager) {
         this.terrain  = terrain;
-        this.gameObjects = gameObjects;
         this.stemLayer = stemLayer;
         this.leafLayer = leafLayer;
         this.rendererManager = rendererManager;

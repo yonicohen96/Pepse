@@ -141,7 +141,7 @@ public class PepseGameManager extends GameManager {
     initialize an instance of the Terrain that creates all the terrain blocks of the game
  */
     private void initializeTerrain(WindowController windowController) {
-        terrain = new Terrain(gameObjects(), LOWER_GROUND_LAYER, UPPER_GROUND_LAYER,
+        terrain = new Terrain(LOWER_GROUND_LAYER, UPPER_GROUND_LAYER,
                 windowController.getWindowDimensions(),
                 SEED, screenRendererManager);
     }
@@ -155,7 +155,7 @@ public class PepseGameManager extends GameManager {
     initialize an instance of the Tree class that creates all the trees in the game (stems and leaves)
  */
     private void initializeTrees() {
-        tree = new Tree(terrain, gameObjects(), STEM_LAYER, LEAF_LAYER, screenRendererManager);
+        tree = new Tree(terrain, STEM_LAYER, LEAF_LAYER, screenRendererManager);
     }
 /*
     initialize all the day and night GameObjects to the game (night, sun, sunHalo)
