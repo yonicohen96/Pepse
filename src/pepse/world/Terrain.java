@@ -37,9 +37,8 @@ public class Terrain {
      * @param seed seed to be used for generating terrain's block
      * @param rendererManager render manager object
      */
-    public Terrain(GameObjectCollection gameObjects,
-                   int lowerGroundLayer, int upperGroundLayer, Vector2 windowDimensions,
-                   int seed, ScreenRendererManager rendererManager){
+    public Terrain(GameObjectCollection gameObjects, int lowerGroundLayer, int upperGroundLayer,
+                   Vector2 windowDimensions, int seed, ScreenRendererManager rendererManager){
         this.gameObjects = gameObjects;
         this.upperGroundLayer = upperGroundLayer;
         this.lowerGroundLayer = lowerGroundLayer;

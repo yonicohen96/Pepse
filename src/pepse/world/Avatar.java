@@ -119,9 +119,8 @@ public class Avatar extends GameObject {
      * @param imageReader image reader object
      * @return returns the created avatar object
      */
-    public static Avatar create(GameObjectCollection gameObjects,
-                                int layer, Vector2 topLeftCorner,
-                                UserInputListener inputListener,
+    public static Avatar create(GameObjectCollection gameObjects, int layer,
+                                Vector2 topLeftCorner, UserInputListener inputListener,
                                 ImageReader imageReader){
         Renderable AvatarImg = imageReader.readImage(STAND_IMG_PATH, true);
         Avatar avatar = new Avatar(topLeftCorner, AVATAR_SIZE, AvatarImg, inputListener, imageReader);

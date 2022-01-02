@@ -55,22 +55,6 @@ public class NoiseGenerator {
     }
 
     /**
-     * function to set seed
-     * @param seed seed to set
-     */
-    public void setSeed(double seed) {
-        this.seed = seed;
-    }
-
-    /**
-     * function to get seed
-     * @return the seed
-     */
-    public double getSeed() {
-        return this.seed;
-    }
-
-    /**
      * function to get the noise
      * @param x coordinate
      * @return the noise at x
