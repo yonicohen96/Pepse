@@ -24,6 +24,8 @@ public class Sun extends GameObject {
     private static final float SUN_INITIAL_MOVEMENT_TRANSITION = 0f;
     private static final double FINAL_MOVEMENT_TRANSITION_CYCLE = 2 * Math.PI;
     private static final double SUN_OVAL_RATIO = 1.8;
+    public static final int MAX_COLOR_SCALE = 255;
+    public static final int SUNSET_COLOR_SCALE = 126;
 
     /**
      * Construct a new GameObject instance.
@@ -75,7 +77,8 @@ public class Sun extends GameObject {
 
     private static void setSunColor(GameObject sun, float sunAngle) {
         sun.renderer().setRenderable(
-                new OvalRenderable(new Color(255,(int)(126*Math.cos(sunAngle)+126),0)));
+                new OvalRenderable(new Color(MAX_COLOR_SCALE,(int)(SUNSET_COLOR_SCALE * Math.cos(sunAngle) +
+                        SUNSET_COLOR_SCALE),0)));
     }
 
     /*
