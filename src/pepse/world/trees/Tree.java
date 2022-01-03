@@ -11,7 +11,6 @@ import java.util.Random;
  * class that represents a tree objects manager for pepse game
  */
 public class Tree {
-
     private static final int STEM_BLOCKS_NUMBER_RANGE = 9;
     private static final int MIN_STEM_BLOCK_NUMBER = 6;
     private static final int MAX_RANDOM_VALUE = 100;
@@ -63,7 +62,6 @@ public class Tree {
         stemProducer.createStem(x, treeBaseY, treeSize);
         leavesProducer.createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
     }
-
 
     /*
     function to allocate a tree in a given x coordinate
