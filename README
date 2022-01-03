@@ -16,7 +16,7 @@ the objects for a single tree. StemProducer creates Block objects and LeavesProd
 another class that we have created in order to handle the specific functionality of a leaf.
 
 Class Tree:
-This class represents all the trees in the game. the instance of PepseGameManager holds a field of Tree
+This class represents all the trees in the game. The instance of PepseGameManager holds a field of Tree
 object, and uses it's simple API that consists only it's constructor and createTreeInRange method,
 which creates all the relevant objects in the given range. When this method is called, the Tree instance
 chooses randomly the location of the trees to create (with predefined density level) and in order to create
@@ -32,8 +32,64 @@ when needed, to support the "infinite world" as described above.
 
 Class LeavesProducer and Class Leaf:
 The relation between LeavesProducer to Tree, is similar to this of StemProducer.
+However the logic of the leaves creation is different from stem blocks.
+There are actions and attributes that needed to be set in the initialization of the leaves, such as their
+ lifetime, fade time, etc. These attributes are determined by LeavesProducer when creating the leaves.
+ On the other hand, there are operations that the created leaf needs to supply, like resetting it's initial
+  location (needs to save a field for that) and updating it's location when falling.
+  Therefore we have implemented another class - Leaf, that is in charge of these operations. This class
+   extends Block, as it is a first a block in the game, and have additional functionality, and needs to
+override the update function.
 
 
+############ Part 4 - Dilemmas and Design ############
+### Dilemma - Implementing Avatar states: ###
+
+Background:
+Avatar haד different states: flying, falling, walking and standing.
+In each state there are different operations that affect the Avatar's attributes differently (energy,
+location, velocity, renderer, etc). We have considered different design patterns:
+	- Considering Strategy Design Pattern:
+	  This option was denied since the object changes it's state frequently and therefore this design pattern
+	  is not suitable to our case in it's essence.
+	- Considering State Design Pattern:
+	  We have considered keeping the different states of the Avatar as different classes that inherits from
+	  an abstract class of a state (of implementing a state interface). However, we have realised that the
+	  differences between different states are not enough to justify the creation of different classes and
+	  it will make our code less flexible.
+	- Considering Decorator Design Pattern:
+	  We have chosen not to use Decorator, as the Avatar has one state at a time, and we don't need to utilize
+	  the Decorator's ability to activate different operations of different objects in a single call,
+	  which is it's essence.
+
+Our Implementation:
+We have realized that the states are unique to the Avatar, and we want the state to access the fields of the
+Avatar it belongs to. With that in mind we decided to implement an inner class for the avatar states -
+"AvatarState". The Avatar holds instances of this nested class which defines the different states of the
+avatar. The Avatar also holds a field for the currents state - that keeps the reference for the
+appropriate state. When needed the Avatar changes it's state (for example when flying and run out of energy),
+ and when that happens, it uses the method setState to set the new state, the new renderable
+ and it's dimensions. The states are differ by the function that is called when the update function is called.
+  We defined these operations for the different states in separate functions in Avatar class, and these
+  methods are sent as method references to the states. Next, we override the update function by calling the
+   state's update function (which operates the function that it got as a method reference).
+
+### Dilemma - Tree Package Structure ###
+We have considered the option that Tree will use only the class Block in order to create objects for the
+leaves and the stems. On one hand, passing the responsibilities to new classes can result in too complex
+classes dependencies and structure. On the other hand, keeping the management and the logic of the creation
+ of leaves inside Tree, will load Tree with too complex functionalities that logically can be split.
+We have chosen to split the classes as described above, to make the code more readable and modular.
 
 
+############ Part 5 - Bonus ############
 
+# Sun Change of Color:
+We decided to create a sun that changes it's colors and simulate real looking sunrise and sunset.
+When the sun gets close to the ground, it becomes gradually red, in the bottom it is totally red,
+and when moving to the top, it becomes gradually yellow. For that, we used a transition that changes the
+ sun's renderable according to it's angle.
+
+# Avatar Sound:
+We decided to add another element for the Avatar - Sound.
+When pressing 'p' (for play) the Avatar selects a random sound which characterises it.
