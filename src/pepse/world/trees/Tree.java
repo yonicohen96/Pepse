@@ -1,7 +1,6 @@
 package pepse.world.trees;
 
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
 import danogl.components.ScheduledTask;
 import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
@@ -34,29 +33,32 @@ public class Tree {
     private static final float LEAF_RANK_RATIO = 5f;
     private static final int LEAF_FALL_VELOCITY = 50;
     private static final int MAX_RANDOM_VALUE = 100;
-    private static final int TREE_DENSITY_PERCENTAGE = 5;
+    private static final int TREE_DENSITY_PERCENTAGE = 3;
     private static final int WIND_TRANSITION_RANGE = 5;
     private static final float LEAF_ROTATE_TRANSITION_TIME = 1.1f;
     private static final float LEAF_SCALE_TRANSITION_TIME = 0.8f;
     private static final int LEAF_MIN_SIZE = 27;
     private static final int LEAF_MAX_SIZE = 40;
-    private static final int GENERAL_SEED = 60;
     private final Terrain terrain;
-    private final static Random random = new Random();
+    private final Random random;
     private final int stemLayer;
     private final int leafLayer;
     private final ScreenRendererManager rendererManager;
+    private final int seed;
 
     /**
      * constructor
      * @param terrain Terrain object - to locate trees above the terrain
+     * @param seed random factor seed
      * @param stemLayer layer allocated for stem
      * @param leafLayer layer allocated for leaves
      * @param rendererManager renderer manager object
      */
-    public Tree(Terrain terrain, int stemLayer, int leafLayer,
+    public Tree(Terrain terrain, int seed, int stemLayer, int leafLayer,
                 ScreenRendererManager rendererManager) {
         this.terrain  = terrain;
+        this.seed = seed;
+        this.random = new Random(seed);
         this.stemLayer = stemLayer;
         this.leafLayer = leafLayer;
         this.rendererManager = rendererManager;
@@ -83,7 +85,7 @@ public class Tree {
      */
     private void createTree(int x) {
         int treeBaseY = (int) terrain.groundHeightAt(x) - Block.SIZE;
-        int treeSize = (new Random(x).nextInt(STEM_BLOCKS_NUMBER_RANGE * Block.SIZE) +
+        int treeSize = (new Random(Objects.hash(x * seed)).nextInt(STEM_BLOCKS_NUMBER_RANGE * Block.SIZE) +
                 MIN_STEM_BLOCK_NUMBER * Block.SIZE) / Block.SIZE;
         createStem(x, treeBaseY, treeSize);
         createLeaves(x, treeBaseY - treeSize * Block.SIZE, treeSize);
@@ -93,7 +95,7 @@ public class Tree {
     function ot create a single's tree leaves
      */
     private void createLeaves(int x, int treetop, int treeSize) {
-        Random leavesRandom = new Random(x);
+        Random leavesRandom = new Random(Objects.hash(x * seed));
         int delta = Block.roundToBlock((treeSize * Block.SIZE / 3));
         for (int i = x - delta ; i <= x + delta; i+=Block.SIZE) {
             for (int j = treetop - delta; j <= treetop + delta ; j+=Block.SIZE) {
@@ -167,7 +169,7 @@ public class Tree {
     function to allocate a tree in a given x coordinate
      */
     private boolean allocateTreeInX(int x){
-        Random treeAllocateRand = new Random(Objects.hash(x, GENERAL_SEED));
+        Random treeAllocateRand = new Random(Objects.hash(x * seed));
         return treeAllocateRand.nextInt(MAX_RANDOM_VALUE) <= TREE_DENSITY_PERCENTAGE;
     }
 

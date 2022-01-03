@@ -10,6 +10,8 @@ public class NoiseGenerator {
     private int[] p;
     private int[] permutation;
 
+
+
     /**
      * generate perlin noise
      * @param seed seed to use for the randomness

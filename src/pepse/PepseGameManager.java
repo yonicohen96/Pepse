@@ -27,7 +27,7 @@ import java.util.LinkedList;
  * and removing the extended screen renderables.
  */
 public class PepseGameManager extends GameManager {
-    private static final int SEED = 100;
+    private static final int SEED = 7564;
     private static final float CYCLE_LENGTH = 30;
     private static final int SCREEN_BUFFER_SIZE = 3;
     private static final int SUN_LAYER = Layer.BACKGROUND + 1;
@@ -154,7 +154,7 @@ public class PepseGameManager extends GameManager {
     initialize an instance of the Tree class that creates all the trees in the game (stems and leaves)
  */
     private void initializeTrees() {
-        tree = new Tree(terrain, STEM_LAYER, LEAF_LAYER, screenRendererManager);
+        tree = new Tree(terrain, SEED, STEM_LAYER, LEAF_LAYER, screenRendererManager);
     }
 /*
     initialize all the day and night GameObjects to the game (night, sun, sunHalo)

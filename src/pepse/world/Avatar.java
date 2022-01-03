@@ -22,9 +22,11 @@ import java.util.Random;
 public class Avatar extends GameObject {
 
     private static final int AVATAR_MASS = 1;
+    private final Random random;
     private enum AvatarStatesNames {FLY, FALL, WALK, STAND}
     private static final Vector2 AVATAR_SIZE = new Vector2(60, 95);
     private static final Vector2 AVATAR_FLY_SIZE = new Vector2(140, 140);
+    private static final int SEED = 300;
     private static final float MOVEMENT_SPEED = 300;
     private static final float JUMP_SPEED = 300;
     private static final float FLIGHT_SPEED = 300;
@@ -67,7 +69,6 @@ public class Avatar extends GameObject {
         collide = true;
     }
 
-
     /**
      * Construct a new GameObject instance.
      *
@@ -96,6 +97,7 @@ public class Avatar extends GameObject {
         this.standState = new AvatarState(this::standUpdate, avatarStandRenderable, AVATAR_SIZE,
                 AvatarStatesNames.STAND);
         this.curState = this.standState;
+        this.random = new Random(SEED);
 
     }
 
@@ -199,9 +201,8 @@ public class Avatar extends GameObject {
     check if the user is pressing the key "P" for playing avatar sounds
  */
     private void checkSounds() {
-        Random rand = new Random();
         if(inputListener.isKeyPressed(KeyEvent.VK_P) && !isSoundPlaying){
-            soundArrayList.get(rand.nextInt(AVATAR_SOUND_NUMBER)).play();
+            soundArrayList.get(random.nextInt(AVATAR_SOUND_NUMBER)).play();
             isSoundPlaying = true;
             new ScheduledTask(this, 1, false
                     , () -> isSoundPlaying = false);
