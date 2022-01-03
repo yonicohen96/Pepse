@@ -43,6 +43,7 @@ public class Leaf extends Block {
     public void update(float deltaTime) {
         super.update(deltaTime);
         if (this.getVelocity().y() > 0){
+            // if leaf is falling, update location
             this.transform().setTopLeftCornerX((float) (originalPosition.x() +
                     Math.sin(this.getCenter().y() / LEAF_MOTION_FREQUENCY) * LEAF_MOTION_AMPLITUDE));
         }

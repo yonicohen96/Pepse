@@ -9,7 +9,30 @@ yehonathanc
 
 
 ############ Part 3 - Implementing Tree Package ############
-The
+In general:
+The package tree consists of the class Tree in which PepseGameManager uses to create trees,
+and this class uses two separate classes to do so - LeavesProducer and StemProducer, that create
+the objects for a single tree. StemProducer creates Block objects and LeavesProducer creates Leaf objects -
+another class that we have created in order to handle the specific functionality of a leaf.
+
+Class Tree:
+This class represents all the trees in the game. the instance of PepseGameManager holds a field of Tree
+object, and uses it's simple API that consists only it's constructor and createTreeInRange method,
+which creates all the relevant objects in the given range. When this method is called, the Tree instance
+chooses randomly the location of the trees to create (with predefined density level) and in order to create
+a single tree, it uses two classes - LeavesProducer and StemProducer (Tree holds instances of these classes
+as fields).
+
+Class StemProducer:
+This class creates stem of a tree, given it's location, size, and base y coordinate. therefore it's API is
+a method of createStem that implements this required functionality.
+StemProducer consists of ScreenRendererManager object which it gets from Tree when it calls it's constructor.
+That way StemProducer enables the ScreenRendererManager object to save the created objects and delete them
+when needed, to support the "infinite world" as described above.
+
+Class LeavesProducer and Class Leaf:
+The relation between LeavesProducer to Tree, is similar to this of StemProducer.
+
 
 
 
