@@ -5,11 +5,9 @@ package pepse.util;
  * class to generate random values using Perlin Noise
  */
 public class NoiseGenerator {
-    private double seed;
+    private final double seed;
     private long default_size;
     private int[] p;
-    private int[] permutation;
-
 
 
     /**
@@ -27,7 +25,7 @@ public class NoiseGenerator {
     private void init() {
         // Initialize the permutation array.
         this.p = new int[512];
-        this.permutation = new int[] { 151, 160, 137, 91, 90, 15, 131, 13, 201,
+        int[] permutation = new int[]{151, 160, 137, 91, 90, 15, 131, 13, 201,
                 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99,
                 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26,
                 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88,
@@ -46,7 +44,7 @@ public class NoiseGenerator {
                 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184,
                 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236,
                 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66,
-                215, 61, 156, 180 };
+                215, 61, 156, 180};
         this.default_size = 35;
 
         // Populate it

@@ -55,15 +55,15 @@ public class Sun extends GameObject {
             float cycleLength) {
         GameObject sun = createInstance(gameObjects, layer, windowDimensions);
         setMovementTransition(windowDimensions, cycleLength, sun);
-        setColorTransition(windowDimensions, cycleLength, sun);
+        setColorTransition(cycleLength, sun);
         sun.setTag(SUN_TAG);
         return sun;
     }
 /*
     function to set the changing sun color transition
  */
-    private static void setColorTransition(Vector2 windowDimensions, float cycleLength, GameObject sun) {
-        new Transition<Float>(
+    private static void setColorTransition(float cycleLength, GameObject sun) {
+        new Transition<>(
                 sun, // the game object being changed
                 (angle) -> Sun.setSunColor(sun, angle), // the method to call
                 SUN_INITIAL_MOVEMENT_TRANSITION, // initial transition value

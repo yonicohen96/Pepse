@@ -54,7 +54,7 @@ public class Avatar extends GameObject {
     private final AvatarState standState;
     private SoundReader soundReader ;
     private static boolean isSoundPlaying = false;
-    private ArrayList<Sound> soundArrayList = new ArrayList<>(AVATAR_SOUND_NUMBER);
+    private final ArrayList<Sound> soundArrayList = new ArrayList<>(AVATAR_SOUND_NUMBER);
     private boolean collide = true;
 
 

@@ -32,7 +32,7 @@ public class ScreenRendererManager {
         this.indexToFill = 0;
         this.gameObjectsList = gameObjectsList;
         for (int i = 0; i < screenBufferSize; i++) {
-            gameObjectsList.push(new ArrayList<Map.Entry<GameObject, Integer>>());
+            gameObjectsList.push(new ArrayList<>());
         }
     }
 
