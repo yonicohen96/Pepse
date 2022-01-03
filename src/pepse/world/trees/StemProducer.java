@@ -15,6 +15,11 @@ public class StemProducer {
     private final ScreenRendererManager rendererManager;
     private final int layer;
 
+    /**
+     * constructor
+     * @param screenRendererManager screen renderer manager object
+     * @param layer layer to place the stem blocks in
+     */
     public StemProducer(ScreenRendererManager screenRendererManager, int layer) {
         this.rendererManager = screenRendererManager;
         this.layer = layer;

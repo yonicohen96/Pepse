@@ -190,7 +190,6 @@ public class PepseGameManager extends GameManager {
     extended screen and its renderables.
  */
     private void checkBoundaries() {
-        // check if need to change left
         if(avatar.getCenter().x() > screenRightX){
             screenRendererManager.removeGameObjects(0);
             screenLeftX = screenRightX;

@@ -35,6 +35,12 @@ public class LeavesProducer {
     private final int layer;
     private final int seed;
 
+    /**
+     * constructor
+     * @param seed seed for randomness
+     * @param screenRendererManager screen renderer manager object
+     * @param layer layer to place the leaves in
+     */
     public LeavesProducer(int seed, ScreenRendererManager screenRendererManager, int layer) {
         this.seed = seed;
         this.random = new Random(seed);
