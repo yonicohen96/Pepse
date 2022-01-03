@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.Objects;
 import java.util.Random;
 
-public class LeavesCreator {
+public class LeavesProducer {
     private static final Color LEAVES_COLOR = new Color(50, 200, 30);
     private static final float LEAF_SCALE_DELTA = 0.5f;
     private static final float FADEOUT_TIME = 10f;
@@ -35,7 +35,7 @@ public class LeavesCreator {
     private final int layer;
     private final int seed;
 
-    public LeavesCreator(int seed, ScreenRendererManager screenRendererManager, int layer) {
+    public LeavesProducer(int seed, ScreenRendererManager screenRendererManager, int layer) {
         this.seed = seed;
         this.random = new Random(seed);
         this.rendererManager = screenRendererManager;
