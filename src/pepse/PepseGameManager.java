@@ -70,11 +70,6 @@ public class PepseGameManager extends GameManager {
         createWorldObjects(imageReader, inputListener, windowController, soundReader);
         renderScreens(windowController);
         setLayersCollisions();
-
-//        Camera objCamera = new Camera(avatar, Vector2.ZERO,
-//        windowController.getWindowDimensions().mult(8f),
-//        windowController.getWindowDimensions());
-//        this.setCamera(objCamera);
     }
 
 /*

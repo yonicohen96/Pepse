@@ -1,11 +1,73 @@
-itai.david
+itai.david 316088327
 yehonathanc
 
 
 ############ Part 1 - Differences Between UMLs (Before and After coding) ############
+ScreenRenderManager class:
+    Creating the ScreenRenderManager class, first we thought to hold all the game object in the PepseManager
+    for handling the infinity world feature, it will handle all the logic behind adding and removing objects
+    from the engine (adding and removing for make the game run more smoothly.
+    Then we understand that the logic behind handling all the objects (removing and adding etc.)
+    is more complex than we thought.
+    so we create the ScreenRenderManager to handle it and all the non-constant gameObjects will
+    be added to the game engine from that class. So the PepseManager will not hold a gameObjectCollection
+    in composition anymore (as we can see in the UML).
 
+Trees:
+   First we thought that the Tree class will use only the Block class to create all the objects needed for
+   creating a tree and add it to the game.
+   Than we understand that the logic behind creating a tree is more complex
+   (especially the leaves functionally), so we decide to separate it to different class to maintain
+   the program modularity, so we create 2 generator class (the leaf and the stem) that responsible
+   for creating all the blocks and their functionality for a single tree (as we can see in the UML).
+
+NoiseGenerator – terrain
+    First we thought that the terrain class we only use the noiseGenerator services and will not hold an
+    instance of it as a field (composition), than we understand that we need to use it for all the
+    terrain block instances that should create using a constant
+    seed that we use to create the noiseGenerator instance.
+    And to support the groundHeightAtX function so we have to hold an instance of the NoiseGenerator class.
+
+Generally –
+    First we thought that we need to hold a gameobjectCollection instance in every game elements class
+    that we want to add to the game (sky, avatar, terrain.. etc.).
+    Than we understand that for the constant-elements (night, sky, sun, sunHalo) that we create
+    only once at the start of the game, we don’t have to hold an gameobjectCollection instance,
+    and for the non-constant element the ScreenRenderManager will hold an gameobjectCollection
+    instance and add them to the game.
 
 ############ Part 2 - Making The World Infinite ############
+
+We have understand that there is a tension between 2 attitudes:
+    1. holding the minimum number of gameObjects parallelly to sustain an infinity world
+    2. make the minimum number of changes (adding and removing gameObjects to the
+       game-cost us also engine sources)
+
+After a lot of checks we found the coordinates range that we believe is the best balance
+between the 2 attitudes above.
+We decide to hold 3 “screens”, left screen, middle screen and right screen.
+Each screen is in the size of the windowDimensions of the game, and we add all their gameObjects
+to the game and hold them parallelly (all the different screen coordinates are strange to each other).
+We created the ScreenRenderManager for handling it, and it works in the following way:
+It holds a linked list of 3 Arrays, each array representing a screen as described above.
+Every Array is holding all the gameObjects and their layers that
+exists in the coordinates the defined the suitable screen.
+
+
+At the start of the game we initialized all the 3 screen and their gameObjects,
+Then in every call for the update function in the PepseManager we check if the Avatar bypass
+The middle screen, we will  to reserve that the Avatar will always be in the middle screen,
+so we delete the irrelevant screen and create a new screen in the opposite direction.
+For example, we initialized screens 1-2-3, so the avatar starts at screen 2 (the middle),
+if the avatar bypass to screen number 3,
+we will remove screen 1 (and all its gameObjects) and add screen 4 (and all its gameObjects).
+So now we hold screens 2-3-4 and the Avatar is in screen 3 (the middle),
+in addition we update the “nodes” in the linked list to be in the right order (as described in the example).
+
+With this solution we don’t need to run over all the gameObjects that is in the game and
+checks for the coordinates and delete the irrelevant ones.
+In addition we sustain a modular program and separate the functionality of handling
+the infinity world objects (adding and removing) from the PepseManager.
 
 
 ############ Part 3 - Implementing Tree Package ############
