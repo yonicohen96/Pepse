@@ -1,4 +1,4 @@
-itai.david 316088327
+itai.david
 yehonathanc
 
 
@@ -35,6 +35,7 @@ Generally –
     only once at the start of the game, we don’t have to hold an gameobjectCollection instance,
     and for the non-constant element the ScreenRenderManager will hold an gameobjectCollection
     instance and add them to the game.
+
 
 ############ Part 2 - Making The World Infinite ############
 
